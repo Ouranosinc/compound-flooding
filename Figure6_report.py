@@ -9,14 +9,14 @@ import os
 # %% Section 1: reading the river flow
 
 # inputs: path to the daily flow data (excel file) provided by DEH and name of the river outlets for analysis
-name = 'Petit_Cascapedia'
+name = 'Petit_Saguenay'
 
 pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Extraction_Qjourn_Ouranos_20082021.xlsx'
 
 data_Q = pd.read_excel(pth, index_col = None)
 
-st = {'Ristigouche':'GASP00913', 'Matane':'GASP02848', 'au_Renard':'GASP00038', 'Saint-Jean':'01EX0000', 'Chicoutimi':'SAGU00012', 'Petit_Saguenay':'SAG00012', 'Moulin':'SAGU00279', 'Montmorency':'SLNO00294', 'Saint-Charles':'SLNO00004',
-      'York':'GASP02158', 'Chaudiere':'SLSO02381', 'Outardes':'CNDA00096', 'Gouffre':'SLNO00195', 'Mitis':'GASP03111', 'Ha_Ha':'SAGU00151', 'Sables':'SAGU00599','RivSud':'SLSO02566','Petit_Cascapedia':'GASP01528' }  # to be confirned with DEH
+st = {'Ristigouche':'GASP00913', 'Matane':'GASP02848', 'au_Renard':'GASP00038', 'Saint-Jean':'01EX0000', 'Chicoutimi':'SAGU00288', 'Petit_Saguenay':'SAGU00012', 'Moulin':'SAGU00279', 'Montmorency':'SLNO00294', 'Saint-Charles':'SLNO00004',
+      'York':'GASP02158', 'Chaudiere':'SLSO00003', 'Outardes':'CNDA00096', 'Gouffre':'SLNO00195', 'Mitis':'GASP03111', 'Ha_Ha':'SAGU00151', 'Sables':'SAGU00599','RivSud':'SLSO02566','Petit_Cascapedia':'GASP01528' }  # to be confirned with DEH
 
 idd = st[name]
 Q = pd.DataFrame({'Q(m3/s)':data_Q[idd][1:],
@@ -60,7 +60,7 @@ ax.spines['right'].set_visible(False)
 plt.title(name, fontsize=10)
 ax.set_ylim(0,max(Q_plt_s)+20)
 plt.ylabel('Débit ($m^3$/s)')
-plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Qmax_annual_Petit_Cascapedia.png')
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Qmax_annual_Petit_Saguenay.png')
 
 
 
