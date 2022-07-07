@@ -12,7 +12,7 @@ import os
 # %% Section 1: river flow
 
 # inputs: path to the daily flow data (excel file) provided by DEH and name of the river outlets for analysis
-name = 'Assomption'
+name = 'Nicolet'
 pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Extraction_Qjourn_Ouranos_LOT3.xlsx'
 
 data_Q = pd.read_excel(pth, index_col = None)
@@ -36,13 +36,16 @@ Q_annual_max.reset_index(inplace=True)
 
 
 # %% reading the water level data time series
-pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/wl_data.csv')
+pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/wl_50cm.csv')
 data_wl= pd.read_csv(pth2, index_col = None)
 
 
 data_wl['Date'] = pd.to_datetime(data_wl['Date'])
 data_wl = data_wl.set_index('Date')
-data_wl = data_wl.loc['1968-01-01':'2019-12-31']  
+data_wl = data_wl.loc['1968-01-01':'2020-12-31']  
+
+#data_wl = data_wl.loc['1985-01-01':'2020-12-31'] 
+#data_wl = data_wl.loc['1968-01-01':'1984-12-31']  
 
 # finding annual maxima along with its day, month, year
 

@@ -1,0 +1,104 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+import datetime
+from datetime import timedelta
+import scipy.stats as stats
+import pingouin as pg
+import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy.stats import pearsonr
+
+# %% WLcondQ
+name = 'Batiscan'
+
+pth = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLcondQ_1968_2020.csv')
+#pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Nicolet/WLcondQ.csv'
+data = pd.read_csv(pth, index_col = None,parse_dates= {"date" : ["year","month","day"]})
+data =  data.drop(['Date'], axis=1)
+data = data.set_index('date')
+data['type'] = '1968-2020'
+
+
+pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLcondQ_1985_2020.csv')
+#pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Nicolet/WLcondQ.csv'
+data2 = pd.read_csv(pth2, index_col = None,parse_dates= {"date" : ["year","month","day"]})
+data2 =  data2.drop(['Date'], axis=1)
+data2 = data2.set_index('date')
+
+data2['type'] = '1985-2020'
+
+result = pd.concat([data,data2],axis=0)
+
+# find 90th percentile of the Qmax and WLcondQ
+
+Q_90th = result.Qmax.quantile(0.9)
+WL_90th = result.Wlmax.quantile(0.9)
+
+
+
+
+
+sns.set(style='ticks', font_scale=1)
+g = sns.scatterplot(data=result, x="Qmax", y="Wlmax", hue = 'type')
+g.set(xlabel ='Qmax($m^3$/s)',ylabel = '$WL_{cond}Q(m)$')
+g.legend(bbox_to_anchor=(1.02, 1),loc = 'upper left',title = 'Serie',borderaxespad=0)
+g.set_title(name,fontsize=12)    
+sns.despine()
+
+g.axvline(result.Qmax.quantile(0.9),color = "r",linestyle='--') 
+g.axhline(result.Wlmax.quantile(0.9),color = "r",linestyle='--') 
+
+
+g.axvline(result.Qmax.quantile(0.5),color = "k",linestyle='--') 
+g.axhline(result.Wlmax.quantile(0.5),color = "k",linestyle='--') 
+
+
+
+plt.savefig(os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLcondQ_scatter.png'),dpi=300,bbox_inches='tight')  
+
+# %% QcondWL
+name = 'Batiscan'
+
+pth = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/QcondWL_1968_2020.csv')
+#pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Nicolet/WLcondQ.csv'
+data = pd.read_csv(pth, index_col = None,parse_dates= {"date" : ["year","month","day"]})
+data =  data.drop(['Date'], axis=1)
+data = data.set_index('date')
+data['type'] = '1968-2020'
+
+
+pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/QcondWL_1985_2020.csv')
+#pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Nicolet/WLcondQ.csv'
+data2 = pd.read_csv(pth2, index_col = None,parse_dates= {"date" : ["year","month","day"]})
+data2 =  data2.drop(['Date'], axis=1)
+data2 = data2.set_index('date')
+
+data2['type'] = '1985-2020'
+
+result = pd.concat([data,data2],axis=0)
+
+sns.set(style='ticks', font_scale=1)
+g = sns.scatterplot(data=result, x="Wlmax", y="Qmax", hue = 'type')
+# g.plot_joint(sns.scatterplot,color="r")
+# g.plot_marginals(sns.histplot, kde=True, color="r")
+# g.plot_joint(sns.regplot,ci = None, color="r")
+# g.ax_joint.text(600, 5.75, r'$\tau$'' = 0.30, p = 0.01', fontstyle='italic')
+# g.ax_joint.set_xlabel('Qmax($m^3$/s)')
+g.set(xlabel ='WLmax(m)',ylabel = '$Q_{cond}$WL($m^3$/s)')
+g.legend(bbox_to_anchor=(1.02, 1),loc = 'upper left',title = 'Serie',borderaxespad=0)
+g.set_title(name,fontsize=12)    
+
+sns.despine()
+
+g.axvline(result.Wlmax.quantile(0.9),color = "r",linestyle='--') 
+g.axhline(result.Qmax.quantile(0.9),color = "r",linestyle='--') 
+
+
+g.axvline(result.Wlmax.quantile(0.5),color = "k",linestyle='--') 
+g.axhline(result.Qmax.quantile(0.5),color = "k",linestyle='--') 
+
+plt.savefig(os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/QcondWL_scatter.png'),dpi=300,bbox_inches='tight')  

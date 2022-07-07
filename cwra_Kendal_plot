@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 27 11:35:19 2022
+
+@author: mohammad
+"""
+
+# %% for CWRA presentation (Kendal Tau for outlets)
+
+import matplotlib.pyplot as plt 
+import cartopy.crs as ccrs
+import cartopy
+import cartopy.feature as cfeat
+import cartopy.io.shapereader as shpr
+import os
+import pandas as pd
+import numpy as np
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib import colors
+import cmasher as cmr
+
+path = os.getcwd()
+os.chdir('/home/mohammad/Dossier_travail/705300_rehaussement_marin/5- Rapports/CWRA')
+data = pd.read_csv('exutoires_tau_CWRA.csv',encoding="ISO-8859-1", skiprows=0, index_col=False)
+
+# plots
+
+fig = plt.figure(figsize=(15,15),dpi=300)
+ax = fig.add_subplot(1,1,1,projection = ccrs.PlateCarree())
+
+ax.add_feature(cfeat.LAND,color = 'whitesmoke')
+ax.add_feature(cfeat.OCEAN, color = 'gainsboro')
+ax.add_feature(cfeat.RIVERS,color = 'lightgrey')
+ax.add_feature(cfeat.LAKES,color = 'lightgrey')
+ax.add_feature(cfeat.COASTLINE, alpha=0.5)
+ax.add_feature(cfeat.BORDERS,linestyle =':')
+
+# ax.set_extent([-73.1,-64.1,45.8,49.4])
+
+ax.set_extent([-74.508,-64.013,43.974,51.393])
+
+# ax.xaxis.set_visible(True)
+# ax.yaxis.set_visible(True)
+
+
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                  linewidth=2, color='gray', alpha=0.5, linestyle='--')
+gl.xlabels_top = False
+gl.ylabels_right = False
+gl.ylabels_left = True
+gl.xlines = True
+gl.xlabel_style = {'size': 20}
+gl.ylabel_style = {'size': 20}
+
+
+# add scatterplot on the map
+
+h=plt.scatter(data['Longitude'], data['Latitude'],
+            c=data['tau_QcondWL'], 
+            cmap=plt.get_cmap("plasma",8), 
+            transform=ccrs.PlateCarree())
+divider = make_axes_locatable(ax)
+ax_cb = divider.new_horizontal(size="5%", pad=0.2, axes_class=plt.Axes)
+fig.add_axes(ax_cb)
+cbars = plt.colorbar(h, cax=ax_cb)
+cbars.set_label(r'$\tau$', fontsize=20)
+cbars.ax.tick_params(labelsize=20)
+#cbars.set_label(r'$\tau$', fontsize=14)
+plt.clim(-0.2,0.6);
+# ax.set_ylabel("Latitude", fontsize=14)
+# ax.set_xlabel("Longitude", fontsize=14)
+ax.set_title('QcondWL',fontsize=20)
+plt.savefig('tau_QcondWL.png',bbox_inches='tight')
+
+# %% for CWRA presentation (Kendal Tau p-value for outlets)
+
+
+import matplotlib.pyplot as plt 
+import cartopy.crs as ccrs
+import cartopy
+import cartopy.feature as cfeat
+import cartopy.io.shapereader as shpr
+import os
+import pandas as pd
+import numpy as np
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib import colors
+import cmasher as cmr
+
+path = os.getcwd()
+os.chdir('/home/mohammad/Dossier_travail/705300_rehaussement_marin/5- Rapports/CWRA')
+data = pd.read_csv('exutoires_tau_CWRA.csv',encoding="ISO-8859-1", skiprows=0, index_col=False)
+
+# plots
+
+fig = plt.figure(figsize=(15,15),dpi=300)
+ax = fig.add_subplot(1,1,1,projection = ccrs.PlateCarree())
+
+ax.add_feature(cfeat.LAND,color = 'whitesmoke')
+ax.add_feature(cfeat.OCEAN, color = 'gainsboro')
+ax.add_feature(cfeat.RIVERS,color = 'lightgrey')
+ax.add_feature(cfeat.LAKES,color = 'lightgrey')
+ax.add_feature(cfeat.COASTLINE, alpha=0.5)
+ax.add_feature(cfeat.BORDERS,linestyle =':')
+
+# ax.set_extent([-73.1,-64.1,45.8,49.4])
+
+ax.set_extent([-74.508,-64.013,43.974,51.393])
+
+# ax.xaxis.set_visible(True)
+# ax.yaxis.set_visible(True)
+
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                  linewidth=2, color='gray', alpha=0.5, linestyle='--')
+gl.xlabels_top = False
+gl.ylabels_right = False
+gl.ylabels_left = True
+gl.xlines = True
+gl.xlabel_style = {'size': 20}
+gl.ylabel_style = {'size': 20}
+
+# add scatterplot on the map
+# add scatterplot onto the map
+cmap = colors.ListedColormap(['red', 'black'])
+bounds=[0,0.05,0.5]
+norm = colors.BoundaryNorm(bounds, cmap.N)
+
+h=plt.scatter(data['Longitude'], data['Latitude'],
+            c=data['pvalue_tau_QcondWL'], 
+            cmap=cmap, 
+            transform=ccrs.PlateCarree(),
+            norm = norm)
+
+divider = make_axes_locatable(ax)
+ax_cb = divider.new_horizontal(size="5%", pad=0.1, axes_class=plt.Axes)
+fig.add_axes(ax_cb)
+cbars = plt.colorbar(h, cax=ax_cb,norm=norm, boundaries=bounds, ticks=[0, 0.05, 0.5])
+cbars.set_label(r'p-value($\tau$)', fontsize=20)
+cbars.ax.tick_params(labelsize=20)
+#cbars.set_label(r'$\tau$', fontsize=14)
+plt.clim(0,1);
+# ax.set_ylabel("Latitude", fontsize=14)
+# ax.set_xlabel("Longitude", fontsize=14)
+ax.set_title('QcondWL',fontsize=20)
+plt.savefig('pvalue_tau_QcondWL.png',bbox_inches='tight')

@@ -125,6 +125,3 @@ plt.savefig('pvalue_tau_QcondWL.png',bbox_inches='tight')
 
 
 
-
-
-

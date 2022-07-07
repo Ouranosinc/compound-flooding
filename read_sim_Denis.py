@@ -13,7 +13,7 @@ import bz2 # this is a library for reading the bz2 compressed files
 from datetime import datetime,timedelta, date
 
 ## section 1: select results for a specific year in the direcotry
-dire = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/simulation_MPO/normal'
+dire = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/simulation_MPO/plus50cm'
 files =[]
 
 
@@ -174,34 +174,34 @@ while i < (len(yrr)): # loop through all years (1968 to 2019 = 52 years)
     i += 1
 
 
-pth1  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Batiscan_normal.csv'
+pth1  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Batiscan_50cm.csv'
 df_Batiscan.to_csv(pth1,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth2  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Becancour_normal.csv'
+pth2  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Becancour_50cm.csv'
 df_Becancour.to_csv(pth2,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth3  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Nicolet_normal.csv'
+pth3  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Nicolet_50cm.csv'
 df_Nicolet.to_csv(pth3,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth4  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Yamaska_normal.csv'
+pth4  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Yamaska_50cm.csv'
 df_Yamaska.to_csv(pth4,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth5  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Saint_Mauricie_normal.csv'
+pth5  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Saint_Mauricie_50cm.csv'
 df_Saint_Mauricie.to_csv(pth5,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth6  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Saint_Francois_normal.csv'
+pth6  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Saint_Francois_50cm.csv'
 df_Saint_Francois.to_csv(pth6,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth7  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Rechelieu_normal.csv'
+pth7  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Rechelieu_50cm.csv'
 df_Richelieu.to_csv(pth7,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth8  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/du_Loup_normal.csv'
+pth8  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/du_Loup_50cm.csv'
 df_du_Loup.to_csv(pth8,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth9  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Maskinonge_normal.csv'
+pth9  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Maskinonge_50cm.csv'
 df_Maskinonge.to_csv(pth9,mode='w',columns=["Date","wl(m)"],index=False)
 
-pth10  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Assomption_normal.csv'
+pth10  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/Assomption_50cm.csv'
 df_Assomption.to_csv(pth10,mode='w',columns=["Date","wl(m)"],index=False)
 
 
