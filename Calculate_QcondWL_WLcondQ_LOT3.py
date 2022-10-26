@@ -2,8 +2,8 @@
 ## This script calculates the QcondWL and WLcondQ for the river outlet.For LOT3 csv format.
 
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+# import numpy as np
+# import matplotlib.pyplot as plt
 import scipy.stats as stats
 import datetime
 from datetime import timedelta
@@ -12,7 +12,7 @@ import os
 # %% Section 1: river flow
 
 # inputs: path to the daily flow data (excel file) provided by DEH and name of the river outlets for analysis
-name = 'Nicolet'
+name = 'Maskinonge'
 pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Extraction_Qjourn_Ouranos_LOT3.xlsx'
 
 data_Q = pd.read_excel(pth, index_col = None)
@@ -36,7 +36,7 @@ Q_annual_max.reset_index(inplace=True)
 
 
 # %% reading the water level data time series
-pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/wl_50cm.csv')
+pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/wl_data.csv')
 data_wl= pd.read_csv(pth2, index_col = None)
 
 
@@ -76,7 +76,7 @@ wl_daily['year'] = pd.DatetimeIndex(wl_daily['Date']).year
 wl_daily['month'] = pd.DatetimeIndex(wl_daily['Date']).month
 wl_daily['day'] = pd.DatetimeIndex(wl_daily['Date']).day
 
-# Section3: constructing the compound dataframe
+# %% constructing the compound dataframe
 
 df_WLcondQ = pd.DataFrame({'Date':Q_annual_max['Date'],
                    'year':Q_annual_max['year'],
@@ -111,8 +111,8 @@ df_WLcondQ['Wlmax'] = maxValue
 df_WLcondQ = df_WLcondQ.drop(['Wlmax_0','Wlmax_1','Wlmax+1'], axis=1)
 
 
-# Write results to a .csv file
-pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLRMcondQ.csv')
+# Write results to a csv file
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLcondQ.csv')
 df_WLcondQ.to_csv(pth3,mode='w',index=False)
 
 tau, p_value_MK = stats.kendalltau(df_WLcondQ['Qmax'], df_WLcondQ['Wlmax'],nan_policy='omit')
@@ -152,7 +152,7 @@ df_QcondWL = df_QcondWL.drop(['Qmax_0', 'Qmax_1','Qmax+1'], axis=1)
 
 # Write results to a .csv file
 df_QcondWL = df_QcondWL.dropna()
-pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/QcondWLRM.csv')
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/QcondWL.csv')
 df_QcondWL.to_csv(pth3,mode='w',index=False)
 
 # calculating correlation    
@@ -161,6 +161,25 @@ tau, p_value_MK = stats.kendalltau(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_p
 rho, p_value_Sp = stats.spearmanr(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_policy='omit')
 
 
+
+
+df_QcondWL_RM = df_QcondWL
+df_QcondWL_RM['Wlmax'] = df_QcondWL['Wlmax']+0.482
+
+df_WLcondQ_RM = df_WLcondQ
+df_WLcondQ_RM['Wlmax'] = df_WLcondQ['Wlmax']+0.482
+
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/QcondWLRM.csv')
+df_QcondWL_RM.to_csv(pth3,mode='w',index=False)
+
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLRMcondQ.csv')
+df_WLcondQ_RM.to_csv(pth3,mode='w',index=False)
+
+tau, p_value_MK = stats.kendalltau(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
+rho, p_value_Sp = stats.spearmanr(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
+
+tau, p_value_MK = stats.kendalltau(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
+rho, p_value_Sp = stats.spearmanr(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
 
 
 

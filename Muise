@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Sep 13 14:31:53 2022
+
+@author: mohammad
+"""
+
+import matplotlib
+import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas as gpd
+import xarray as xr
+import numpy as np
+from scipy import stats
+import plotly.express as px
+import plotly.io as pio
+import os
+pio.renderers.default='browser'
+
+
+filename = "/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Daily_riverflow_storm_surge/discharge_surge_reanalysis_v2.nc"
+data = xr.open_dataset(filename)
+station_id = data['station_lat'][:]
+df = station_id.to_dataframe()
+df.reset_index(inplace=True) 
+
+
+df = df.loc[:,~df.columns.duplicated()].copy() # to remove the duplicted column 9station_lat)
+
+
+
+# Now we have to convert the dataframe (df) to geodatafraem for plotting in plotly
+
+gdf = gpd.GeoDataFrame(
+    df, geometry=gpd.points_from_xy(df.station_lat, df.station_lon))
+
+#plot the geodataframe
+
+fig = px.scatter_geo(gdf,
+                    lat=gdf.geometry.x,
+                    lon=gdf.geometry.y,
+                    hover_name="rivmth_id")
+
+fig.update_geos(
+    visible=False, resolution=50,
+    showcountries=True, countrycolor="black"
+)
+
+fig.show()
+
+#####################################################################################
+Ristigouche_surge = data['max_surge'][884,:]
+Outardes_surge = data['max_surge'][854,:]
+Matane_surge = data['max_surge'][862,:]
+Mitis_surge = data['max_surge'][866,:]
+
+# convert the dataarrays to dataframe for further analysis
+Ristigouche = Ristigouche_surge.to_dataframe()
+Ristigouche =  Ristigouche.drop(['lat', 'lon','station_name'], axis=1)
+
+
+
+Outardes = Outardes_surge.to_dataframe()
+Outardes =  Outardes.drop(['lat', 'lon','station_name'], axis=1)
+
+
+Matane = Matane_surge.to_dataframe()
+Matane =  Matane.drop(['lat', 'lon','station_name'], axis=1)
+
+Mitis = Mitis_surge.to_dataframe()
+Mitis =  Mitis.drop(['lat', 'lon','station_name'], axis=1)
+
+# Now export to csv
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Ristigouche_surge_Muise.csv')
+Ristigouche.to_csv(pth3,mode='w',index=True)
+
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Outardes_surge_Muise.csv')
+Outardes.to_csv(pth3,mode='w',index=True)
+
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Matane_surge_Muise.csv')
+Matane.to_csv(pth3,mode='w',index=True)
+
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Mitis_surge_Muise.csv')
+Mitis.to_csv(pth3,mode='w',index=True)
+

@@ -36,19 +36,19 @@ plt.savefig('C:/Users/mohbiz1/Desktop/Dossier_travail/705300_rehaussement_marin/
 
 
 # %%
-pth2 = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/DFO-MPO/LOT1/A_Mars/A_Mars_wl_data.csv'
+pth2 = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/au_Renard/wl_data.csv'
 
 data_wl = pd.read_csv(pth2, index_col = 0, squeeze= False)
 
 data_wl.reset_index(inplace=True) 
-data_wl['date'] = pd.to_datetime(data_wl['date'])
-data_wl['year'] = pd.DatetimeIndex(data_wl['date']).year
-data_wl['month'] = pd.DatetimeIndex(data_wl['date']).month
-data_wl['day'] = pd.DatetimeIndex(data_wl['date']).day
+data_wl['Date'] = pd.to_datetime(data_wl['Date'])
+# data_wl['year'] = pd.DatetimeIndex(data_wl['date']).year
+# data_wl['month'] = pd.DatetimeIndex(data_wl['date']).month
+# data_wl['day'] = pd.DatetimeIndex(data_wl['date']).day
 
-data_wl = data_wl.set_index('date')
+data_wl = data_wl.set_index('Date')
 
-data_wl = data_wl.rename(columns = {'Sea_Level(m)':'wl(m)'})
+# data_wl = data_wl.rename(columns = {'Sea_Level(m)':'wl(m)'})
 
 
 # plot
@@ -71,9 +71,13 @@ data['wl(m)'] = data['wl(m)'] -2.395 # for Tadoussac : https://tides.gc.ca/en/st
 
 data_wl['wl(m)'] = data_wl['wl(m)'] -2.656 # for Port-Alfred : https://tides.gc.ca/en/stations/03460
 
+data_wl['wl(m)'] = data_wl['wl(m)'] -0.963 # for au Renard : https://tides.gc.ca/en/stations/2330
 
-pth3  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT1/A_Mars/A_Mars_wl_data_CGVD28.csv' 
+
+pth3  = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/au_Renard/wl_data_CGVD28.csv' 
 data_wl.to_csv(pth3,mode='w',index=True)
+
+
 
 # %% 
 

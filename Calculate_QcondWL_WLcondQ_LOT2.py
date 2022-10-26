@@ -12,13 +12,13 @@ import os
 # %% Section 1: river flow
 
 # inputs: path to the daily flow data (excel file) provided by DEH and name of the river outlets for analysis
-name = 'Petit_Saguenay'
+name = 'Moulin'
 pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Extraction_Qjourn_Ouranos_LOT2.xlsx'
 
 data_Q = pd.read_excel(pth, index_col = None)
 
 st = {'Ristigouche':'GASP00913', 'Petit_Cascapedia':'GASP01528', 'York':'GASP02158', 'au_Renard':'GASP00038','Matane':'GASP02848', 'Mitis':'GASP03111', 'Outardes':'CNDA00096', 'Ha_Ha':'SAGU00151', 'Petit_Saguenay':'SAGU00012',
-      'Gouffre':'SLNO00195', 'RivSud':'SLSO02566', 'Montmorency':'SLNO00294', 'Chaudiere':'SLSO00003','Saint_Charles':'SLSO00004',
+      'Gouffre':'SLNO00195', 'RivSud':'SLSO02566', 'Montmorency':'SLNO00294', 'Chaudiere':'SLSO00003','Saint_Charles':'SLNO00004',
       'Chicoutimi':'SAGU00288','Moulin':'SAGU00279', 'Saint_Jean':'SAGU00068'}  
 
 
@@ -41,13 +41,13 @@ Q_annual_max.reset_index(inplace=True)
 
 
 # %% reading the water level data time series
-pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/wl_data_CGVD28.csv')
+pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/wl_50cm.csv')
 data_wl= pd.read_csv(pth2, index_col = None)
 
 
 data_wl['Date'] = pd.to_datetime(data_wl['Date'])
 data_wl = data_wl.set_index('Date')
-data_wl = data_wl.loc['1968-01-01':'2019-12-31']  
+data_wl = data_wl.loc['1968-01-01':'2020-12-31']  
 
 # finding annual maxima along with its day, month, year
 
@@ -114,7 +114,7 @@ df_WLcondQ = df_WLcondQ.drop(['Wlmax_0','Wlmax_1','Wlmax+1'], axis=1)
 
 
 # Write results to a .csv file
-pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/WLcondQ_CGVD28.csv')
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/WLRMcondQ.csv')
 df_WLcondQ.to_csv(pth3,mode='w',index=False)
 
 tau, p_value_MK = stats.kendalltau(df_WLcondQ['Qmax'], df_WLcondQ['Wlmax'],nan_policy='omit')
@@ -154,7 +154,7 @@ df_QcondWL = df_QcondWL.drop(['Qmax_0', 'Qmax_1','Qmax+1'], axis=1)
 
 # Write results to a .csv file
 df_QcondWL = df_QcondWL.dropna()
-pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/QcondWL_CGVD28.csv')
+pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/QcondWLRM.csv')
 df_QcondWL.to_csv(pth3,mode='w',index=False)
 
 # calculating correlation    
@@ -166,20 +166,22 @@ rho, p_value_Sp = stats.spearmanr(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_po
 
 
 
-df_QcondWL_RM = df_QcondWL
-df_QcondWL_RM['Wlmax'] = df_QcondWL['Wlmax']+0.482
+# df_QcondWL_RM = df_QcondWL
+# df_QcondWL_RM['Wlmax'] = df_QcondWL['Wlmax']+0.42
 
-df_WLcondQ_RM = df_WLcondQ
-df_WLcondQ_RM['Wlmax'] = df_WLcondQ['Wlmax']+0.482
+# df_WLcondQ_RM = df_WLcondQ
+# df_WLcondQ_RM['Wlmax'] = df_WLcondQ['Wlmax']+0.42
 
-pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/QcondWL_CGVD28_48_2cm.csv')
-df_QcondWL_RM.to_csv(pth3,mode='w',index=False)
+# pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/QcondWL_CGVD28_42cm.csv')
+# df_QcondWL_RM.to_csv(pth3,mode='w',index=False)
 
-pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/WLcondQ_CGVD28_48_2cm.csv')
-df_WLcondQ_RM.to_csv(pth3,mode='w',index=False)
+# pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/WLcondQ_CGVD28_42cm.csv')
+# df_WLcondQ_RM.to_csv(pth3,mode='w',index=False)
 
-tau, p_value_MK = stats.kendalltau(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
-rho, p_value_Sp = stats.spearmanr(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
+# tau, p_value_MK = stats.kendalltau(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
+# rho, p_value_Sp = stats.spearmanr(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
 
-tau, p_value_MK = stats.kendalltau(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
-rho, p_value_Sp = stats.spearmanr(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
+# tau, p_value_MK = stats.kendalltau(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
+# rho, p_value_Sp = stats.spearmanr(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
+
+

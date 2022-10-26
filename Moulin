@@ -1,0 +1,83 @@
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+import pandas as pd
+import xarray as xr
+
+
+
+
+filename = "/exec/rondeau/projets/test_chicout.csv"
+df = pd.read_csv(filename, sep=";")
+
+# Pandas --> Xarray
+q_CCC = xr.DataArray(df["CCC"], coords={"time": pd.to_datetime(df["dates_ccc"])}).dropna(dim="time")
+q_CSH = xr.DataArray(df["CSH"], coords={"time": pd.to_datetime(df["dates_csh"])}).dropna(dim="time")
+q_vannes = xr.DataArray(df["Vannes"], coords={"time": pd.to_datetime(df["dates_vannes"])}).dropna(dim="time")
+# 13e starts in 2012, so we reindex
+q_13e = xr.DataArray(df["13e"], coords={"time": pd.to_datetime(df["dates_13e"])}).dropna(dim="time").reindex_like(q_vannes, fill_value=0)
+
+slev_alfred = xr.DataArray(df["nv_alfred"], coords={"time": pd.to_datetime(df["dates_alfred"])}).dropna(dim="time")
+slev_tad = xr.DataArray(df["nv_tad"], coords={"time": pd.to_datetime(df["dates_tad"])}).dropna(dim="time")
+slev_chicoutimi = xr.DataArray(df["nv_chicout"].dropna(), coords={"time": pd.to_datetime(df["dates_chicout"].dropna())})
+
+# Prepare plots
+fig = plt.subplots(2, 5, figsize=[18, 9])
+
+q = [q_CCC, q_CSH, q_vannes, q_13e, q_CCC + q_CSH + q_vannes + q_13e]
+labels = ["Chutes-a-Caron", "Shipshaw", "Vannes", "13e", "Somme"]
+for i in range(5):
+    ax = plt.subplot(2, 5, i+1)
+
+    # Select Q
+    q_tot = q[i]
+    # Select only common time()
+    slev_vs_rt = slev_chicoutimi.reindex_like(q_tot)
+
+    # Plot
+    plt.scatter(q_tot, slev_vs_rt)
+
+    plt.xlabel("Q (m³/s)")
+    plt.ylabel("N (m)")
+    plt.title(f"{labels[i]} @ 12h")
+
+# Mean daily values
+slev_chicoutimi = slev_chicoutimi.resample({"time": "1D"}).mean()
+for i in range(5):
+    ax = plt.subplot(2, 5, i+6)
+
+    # Select Q
+    q_tot = q[i].resample({"time": "1D"}).mean()
+    # Select only common time()
+    slev_vs_rt = slev_chicoutimi.reindex_like(q_tot)
+
+    # Plot
+    plt.scatter(q_tot, slev_vs_rt)
+
+    plt.xlabel("Q (m³/s)")
+    plt.ylabel("N (m)")
+    plt.title(f"{labels[i]} @ Daily")
+
+plt.tight_layout()
+
+
+# Prepare SLEV plots
+fig = plt.subplots(1, 3, figsize=[18, 9])
+
+q = [slev_alfred, slev_tad]
+labels = ["Port Alfred", "Baie-Sainte-Catherine"]
+slev_chicoutimi2 = slev_chicoutimi.resample({"time": "1D"}).max().rolling({"time": 3}).max()
+for i in range(2):
+    ax = plt.subplot(1, 3, i+1)
+
+    # Select Q
+    q_tot = q[i].resample({"time": "1D"}).max().rolling({"time": 3}).max()
+    # Select only common time()
+    slev_vs_rt = slev_chicoutimi2.reindex_like(q_tot)
+
+    # Plot
+    plt.scatter(q_tot, slev_vs_rt)
+
+    plt.xlabel(f"N @ {labels[i]} (m)")
+    plt.ylabel("N @ Chicoutimi (m)")
+    plt.title("3-day rolling max @ Daily")

@@ -12,8 +12,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 
-name = 'Batiscan'
-pth = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLcondQ_1985_2020.csv')
+name = 'au_Renard'
+pth = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/WLcondQ.csv')
 #pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Nicolet/WLcondQ.csv'
 data = pd.read_csv(pth, index_col = None,parse_dates= {"date" : ["year","month","day"]})
 data =  data.drop(['Date'], axis=1)
@@ -25,14 +25,14 @@ g = sns.jointplot(data=data, x="Qmax", y="Wlmax", color = "r")
 g.plot_joint(sns.scatterplot,color="r")
 g.plot_marginals(sns.histplot, kde=True, color="r")
 g.plot_joint(sns.regplot,ci = None, color="r")
-g.ax_joint.text(600, 5.75, r'$\tau$'' = 0.30, p = 0.01', fontstyle='italic')
+g.ax_joint.text(400, 4.25, r'$\tau$'' = 0.08, p = 0.42', fontstyle='italic')
 g.ax_joint.set_xlabel('Qmax($m^3$/s)')
 g.ax_joint.set_ylabel('$WL_{cond}Q(m)$')
-g.fig.suptitle(name,fontsize=10)                  
-plt.savefig(os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+name+'/WLcondQ_1985_2020.png'),dpi=300)                
+g.fig.suptitle(name,fontsize=14)                  
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/WLcondQ_Montmorency.png',dpi=300)                
  
 # %% QcondWL       
-pth = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/Nicolet/QcondWL.csv'
+pth = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/QcondWL.csv')
 data = pd.read_csv(pth, index_col = None,parse_dates= {"date" : ["year","month","day"]})
 data =  data.drop(['Date'], axis=1)
 data = data.set_index('date')              
@@ -44,11 +44,11 @@ g = sns.jointplot(data=data, x="Wlmax", y="Qmax", color = "r")
 g.plot_joint(sns.scatterplot,color="r")
 g.plot_marginals(sns.histplot, kde=True, color="r")
 g.plot_joint(sns.regplot,ci = None, color="r")
-g.ax_joint.text(6.0, 50, r'$\tau$'' = 0.17, p = 0.08', fontstyle='italic')
+g.ax_joint.text(2.5, 15, r'$\tau$'' = -0.2, p = 0.04', fontstyle='italic')
 g.ax_joint.set_xlabel('WLmax(m)')
 g.ax_joint.set_ylabel('$Q_{cond}$WL($m^3$/s)')
-g.fig.suptitle("Nicolet")                  
-plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/scatter_QcondWL_Nicolet.png',dpi=300)                
+g.fig.suptitle(name,fontsize=12)               
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/QcondWL_au_Renard.png',dpi=300)                
 
 # %% plot histograms
 pth = r'C:\Users\mohbiz1\Desktop\Dossier_travail\705300_rehaussement_marin\3- Data\LOT2\Chaudiere\QcondWL.csv'

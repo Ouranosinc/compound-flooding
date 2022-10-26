@@ -1,0 +1,96 @@
+
+## This script calculates the QcondWL and WLcondQ for the river outlet.For LOT3 csv format.
+
+import pandas as pd
+# import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+import datetime
+from datetime import timedelta
+import os
+import seaborn as sns
+
+# %% reading the water level data time series
+name = ['Batiscan','Becancour','Saint_Maurice','Nicolet','du_Loup','Maskinonge','Saint_Francois','Yamaska','Richelieu','Assomption']
+diff = pd.DataFrame()
+
+for n in name:
+    temp = pd.DataFrame()
+    pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+n+'/wl_data.csv')
+    data_wl= pd.read_csv(pth2, index_col = None)
+    data_wl['Date'] = pd.to_datetime(data_wl['Date'])
+    data_wl = data_wl.set_index('Date')
+    data_wl = data_wl.loc['1968-01-01':'2020-12-31']      
+    
+    # finding annual maxima along with its day, month, year
+    
+    data_wl.reset_index(inplace=True) 
+    data_wl['year'] = pd.DatetimeIndex(data_wl['Date']).year
+    data_wl['month'] = pd.DatetimeIndex(data_wl['Date']).month
+    data_wl['day'] = pd.DatetimeIndex(data_wl['Date']).day
+
+    # Resample the hourly data to daily
+    data_wl = data_wl.set_index('Date')
+    wl_yearly_mean_hist =data_wl.resample('Y')['wl(m)'].agg(['mean'])
+    wl_yearly_mean_hist = wl_yearly_mean_hist.rename(columns = {'mean':'wl(m)'})
+
+    del data_wl
+    # future
+
+    pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT3/'+n+'/wl_50cm.csv')
+    data_wl= pd.read_csv(pth2, index_col = None)
+    
+    
+    data_wl['Date'] = pd.to_datetime(data_wl['Date'])
+    data_wl = data_wl.set_index('Date')
+    data_wl = data_wl.loc['1968-01-01':'2020-12-31']  
+
+    
+    # finding annual maxima along with its day, month, year
+    
+    data_wl.reset_index(inplace=True) 
+    data_wl['year'] = pd.DatetimeIndex(data_wl['Date']).year
+    data_wl['month'] = pd.DatetimeIndex(data_wl['Date']).month
+    data_wl['day'] = pd.DatetimeIndex(data_wl['Date']).day
+
+    # Resample the hourly data to daily
+    data_wl = data_wl.set_index('Date')
+    wl_yearly_mean_future =data_wl.resample('Y')['wl(m)'].agg(['mean'])
+    wl_yearly_mean_future = wl_yearly_mean_future.rename(columns = {'mean':'wl(m)'})
+
+    temp['value'] = wl_yearly_mean_future - wl_yearly_mean_hist
+    temp['outlet'] = n
+    diff = pd.concat([diff,temp])
+
+    del wl_yearly_mean_future,data_wl, temp
+
+
+Index = diff.index.unique('Date')
+Chateauguay = pd.DataFrame(index = Index,columns=['value'])
+Chateauguay['value'] = 0  # no sea level rise for Chateauguay 
+Chateauguay['outlet'] = 'Chateauguay'  # no sea level rise for Chateauguay 
+
+Moulin = pd.DataFrame(index = Index,columns=['value'])
+Moulin['value'] = 0.482  # no sea level rise for Chateauguay 
+Moulin['outlet'] = 'Moulin'
+
+diff = pd.concat([diff,Chateauguay,Moulin])
+
+# %% plot time series
+fig, ax = plt.subplots(1, 1, sharex=True, figsize = (10,10), dpi=300)
+sns.set(style='whitegrid')
+# sns.set(font_scale = 0.2)
+g = sns.boxplot(y = 'outlet', x = 'value', data = diff, ax = ax, width= 0.3)
+# sns.despine()
+ax.set_xlabel(r'$\Delta$WL(m)')
+g.set(ylabel=None)
+plt.grid('on')
+sns.despine(top=True, right=True)
+
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/5- Rapports/LOT3/Delta_Mean_annual_WL.png', dpi=300)
+
+
+
+
+
+

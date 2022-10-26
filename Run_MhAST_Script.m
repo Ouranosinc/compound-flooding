@@ -28,9 +28,9 @@ clc; clear;
 
 %% User Input
 % Data file name
-datafile = 'data_Maskinonge_1985_2020.txt';
-handles.title = 'WLcondQ';
-%handles.title = 'QcondWL';
+datafile = 'WLRMcondQ.txt';
+handles.title = 'WLRMcondQ';
+% handles.title = 'QcondWL';
 
 % Sampling frequency (how many samples per year?)
 handles.SF = 1;
@@ -52,7 +52,7 @@ handles.Optimization = 'MCMC'; % Local: local optimization; MCMC: both local & g
 % 9: Farlie-Gumbel-Morgenstern (FGM), 10: Gumbel-Barnet, 11: Plackett, 12: Cuadras-Auge, 13: Raftery
 % 14: Shih-Louis, 15: Linear-Spearman, 16: Cubic, 17: Burr, 18: Nelson, 19: Galambos, 20: Marshal-Olkin
 % 21: Fischer-Hinzmann, 22: Roch-Alegre, 23: Fischer-Kock, 24: BB1, 25: BB5, 26: Tawn
-handles.ID_CHOSEN = [1:7];
+handles.ID_CHOSEN = [1:25];
 
 % Calculate pvalues or not? 0: no pvalue; 1: pvalue for the best copula
 % selected according to BIC; 2: pvalue for all chosen copulas
@@ -60,12 +60,15 @@ handles.pvalue = 2;
 
 
 handles.Kendall=0;
+handles.empiricalcopula = 0; % 1 = add the empirical copula plot to the return periods or 0 (not)
 %% Run MhAST
 % Load data
 if ismac
     addpath([pwd,'/Data'])
 elseif ispc
     addpath([pwd,'\Data'])
+elseif isunix
+    addpath([pwd,'/Data'])
 end
 
 try
@@ -74,25 +77,32 @@ catch
     handles.data = load(datafile);
 end
 
+% Conversion from IGLD85 --> CGVD28
+handles.data(:,2) = handles.data(:,2) + 0.01;
+
 % Run main MvCAT function
 [ID_ML,ID_AIC,ID_BIC,Family] = MhAST_main(handles);
 
-
-openfig('C:\Rehaussement_marine\MhAST_Ver02.05\Results\Design\Copula_Based\AND_Scenario\Design-Copula-Based-AND-Scenario18.fig','visible');
-
-% openfig('C:\Rehaussement_marine\MhAST_Ver02.05\Results\Marginal/Variable 1 marginal distribution.fig','visible');
-
-
-saveas(gcf,'Design-Copula-Based-AND-Scenario66.png')
+close all;
+fclose('all');
+clear all;
+delete U1U2.csv S.csv emprnd_S.csv
+% openfig('C:\Rehaussement_marine\MhAST_Ver02.05\Results\Design\Copula_Based\AND_Scenario\Design-Copula-Based-AND-Scenario18.fig','visible');
+% 
+% openfig('Design-Copula-Based-AND-Scenario7.fig','visible');
+% openfig('Variable 1 marginal distribution.fig','visible');
+% openfig('Variable 2 marginal distribution.fig','visible');
+% 
+% saveas(gcf,'Design-Copula-Based-AND-Scenario66.png')
 
 % Failure probability
 
-a = 50; % univariate return period
-b = 50; 
-RP1 = 1-1/a;
-RP2 = 1-1/b;
-Cop12 = RP1 *RP2;
-T = 30; %design lifetime
-FP_AND = 1- ((1-Cop12)^T);
-FP_OR = 1- ((Cop12)^T);
-FP_Uni = 1-(RP1^T);
+% a = 50; % univariate return period
+% b = 50; 
+% RP1 = 1-1/a;
+% RP2 = 1-1/b;
+% Cop12 = RP1 *RP2;
+% T = 30; %design lifetime
+% FP_AND = 1- ((1-Cop12)^T);
+% FP_OR = 1- ((Cop12)^T);
+% FP_Uni = 1-(RP1^T);

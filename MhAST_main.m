@@ -95,6 +95,15 @@ u22 = (n-rr2+0.5)./n;
 U1 = (n-R1+0.5)./n;
 U2 = (n-R2+0.5)./n;
 
+if handles.empiricalcopula
+    
+    U1U2 = [U1 U2];
+    textHeader = strjoin({'Qmax' 'WLmax'}, ',');
+    fid = fopen('U1U2.csv','w');
+    fprintf(fid,'%s\n',textHeader);
+    dlmwrite('U1U2.csv',U1U2,'-append');
+    fclose(fid);
+end
 % Compute Kendal's Corelation Coefficient
 TAU = corr(U1,U2,'type','kendall');
 
@@ -216,7 +225,7 @@ if p_print <= 0.05; Significant = 'Yes'; else Significant = 'No'; end % evaluate
 fprintf(fileID,'%22s %30.4f %20.4f %30s \r\n','Pearson product-moment',r_print,p_print,Significant);
 fprintf(fileID,'%70s \r\n\r\n','');
 %% Mohammad: Plotting the empirical bivariate distribution 
-h=figure('Position',[680 710 389 268]);
+h=figure('Position',[680 710 389 268],'visible','on');
 scatter(EP_emp(:,1), EP_emp(:,2),'k','filled')
 xlabel('River flow(-)')
 ylabel('Water Level(-)')
@@ -228,7 +237,7 @@ title([handles.title + " (\tau ="+ aa + ")"]);
 print('Emprirical_scatter','-dpng','-r300')
 close(h)
 
-h=figure('Position',[680 710 389 268]);
+h=figure('Position',[680 710 389 268],'visible','on');
 scatter(data(:,1), data(:,2),'k','filled')
 xlabel('River flow(m3/s)')
 ylabel('Water Level(m)')
@@ -266,7 +275,7 @@ end
 x = linspace(0,1,100);
 g = x;
 
-h=figure('Position',[680 710 389 268]);
+h=figure('Position',[680 710 389 268],'visible','on');
 plot(x,g,'k')
 hold on
 scatter(W_in, Hn_sort,'r','+')
@@ -302,6 +311,7 @@ end
 
 bounds = [-1.78/sqrt(n), 1.78/sqrt(n)];
 
+
 mU1 = mean(U1);
 mU2 = mean(U2);
 
@@ -318,7 +328,35 @@ FF_up = FF(r55);
 GG_up = GG(r55);
 Hn_up = Hn(r55);
 
-chi = (Hn_up - (FF_up .* GG_up))./sqrt(FF_up .* (1 - FF_up) .* GG_up .* (1 - GG_up));
+chi_up = (Hn_up - (FF_up .* GG_up))./sqrt(FF_up .* (1 - FF_up) .* GG_up .* (1 - GG_up));
+
+chi = (Hn - (FF .* GG))./sqrt(FF .* (1 - FF) .* GG .* (1 - GG));
+
+% % for lower chi-plot
+% 
+
+mU1 = mean(U1);
+mU2 = mean(U2);
+
+r11=0; r22=0;
+
+r11 = find(U1(:,1) < mU1);
+r22 = find(U2(:,1) < mU2);
+r33 = intersect(r11,r22);
+r44 = find(lambda>0);
+r55 = intersect(r33, r44);
+
+lambda_low = lambda(r33);
+FF_low = FF(r33);
+GG_low = GG(r33);
+Hn_low = Hn(r33);
+
+chi_low = (Hn_low - (FF_low .* GG_low))./sqrt(FF_low .* (1 - FF_low) .* GG_low .* (1 - GG_low));
+
+
+
+
+
 
 % now plot
 xx = linspace(-1,1,100);
@@ -327,8 +365,11 @@ gg = zeros(size(xx));
 hh = bounds(1,1)* ones(size(xx));
 ii = bounds(1,2)* ones(size(xx));
 
-h=figure('Position',[680 710 389 268]);
-scatter(lambda_up, chi,'b')
+h=figure('Position',[675 226 481 631],'visible','on');
+subplot(3,1,1)
+scatter(lambda, chi,'k')
+% hold on
+% scatter(lambda_low, chi_low,'r')
 hold on
 plot(gg,xx, '--','Color', [0.8275    0.8275    0.8275])
 xlim([-1 1])
@@ -342,9 +383,66 @@ ylabel('\chi')
 set(gcf,'color','w');
 box on
 % title('Chi-plot: 1985-2020');
-title('Chi-plot');
+title('Chi-plot: all data');
+subplot(3,1,2)
+scatter(lambda_up, chi_up,'b')
+% hold on
+% scatter(lambda_low, chi_low,'r')
+hold on
+plot(gg,xx, '--','Color', [0.8275    0.8275    0.8275])
+xlim([-1 1])
+ylim([-1 1])
+hold on
+plot(xx,hh, '--','Color', [0.8275    0.8275    0.8275])
+hold on
+plot(xx,ii, '--','Color', [0.8275    0.8275    0.8275])
+xlabel('\lambda')
+ylabel('\chi')
+set(gcf,'color','w');
+box on
+% title('Chi-plot: 1985-2020');
+title('Chi-plot: upper quadrant');
+
+subplot(3,1,3)
+scatter(lambda_low, chi_low,'r')
+% hold on
+% scatter(lambda_low, chi_low,'r')
+hold on
+plot(gg,xx, '--','Color', [0.8275    0.8275    0.8275])
+xlim([-1 1])
+ylim([-1 1])
+hold on
+plot(xx,hh, '--','Color', [0.8275    0.8275    0.8275])
+hold on
+plot(xx,ii, '--','Color', [0.8275    0.8275    0.8275])
+xlabel('\lambda')
+ylabel('\chi')
+set(gcf,'color','w');
+box on
+% title('Chi-plot: 1985-2020');
+title('Chi-plot: lower quadrant');
+
+
 print('Chi-plot','-dpng','-r300')
 close(h)
+
+% calculating the upper tail dependence in the data of Capeï¿½raa`ï¿½Fouge`resï¿½Genest
+% cd ..
+aa = 0;
+% 
+% [ c ] = empcopulapdf( EP_emp, 0.05, 2, 'betak' );
+% 
+% [ U ] = empcopularnd( EP_emp, 10000)
+
+
+for i=1:n
+    
+     num = sqrt(log10(1./EP1_emp(i,1))*log10(1./EP2_emp(i,1)));
+     denom = log10(1/(max(EP1_emp(i,1),EP2_emp(i,1)).^2));
+     ll = log10(num./denom);
+     aa = aa +ll;    
+end
+lambda_CFG = 2-2*exp((1./n) * aa);
 
 cd ..
 
@@ -625,7 +723,7 @@ if strcmp(Optimization,'MCMC')
     % Plot copula-based bivariate exceedance probability contours in original data space
     MhAST_Survival_Plot(EP,EBVP,PAR.MC,ID_CHOSEN,Family,handles)
     % Plot return period isolines in original data space
-    [DesignValue_WeightedAvg, DataReturnPeriod] = MhAST_ReturnPeriod(EBVP,PAR.MC,ID_CHOSEN,Family,Kc,Pc,handles);
+    [DesignValue_WeightedAvg, DataReturnPeriod,ReturnPeriod] = MhAST_ReturnPeriod(EBVP,PAR.MC,ID_CHOSEN,Family,Kc,Pc,handles);
     % Design value based on maximum density and based on chosen variable; also plot the design level selection
     DesignValue_MaxDens = MhAST_Design(EBVP,PAR.MC,ID_CHOSEN,Family,Kc,Pc,handles);
     % Uncertainty analysis of design value based on max density for best copula based on BIC
@@ -663,7 +761,7 @@ else
     % Plot copula-based bivariate exceedance probability contours in original data space
     MhAST_Survival_Plot(EP,EBVP,PAR.LO,ID_CHOSEN,Family,handles)
     % Plot return period isolines in original data space
-    [DesignValue_WeightedAvg, DataReturnPeriod] = MhAST_ReturnPeriod(EBVP,PAR.LO,ID_CHOSEN,Family,Kc,Pc,handles);
+    [DesignValue_WeightedAvg, DataReturnPeriod,ReturnPeriod] = MhAST_ReturnPeriod(EBVP,PAR.LO,ID_CHOSEN,Family,Kc,Pc,handles);
     % Design value based on maximum density and based on chosen variable; also plot the design level selection
     DesignValue_MaxDens = MhAST_Design(EBVP,PAR.LO,ID_CHOSEN,Family,Kc,Pc,handles);
     % Uncertainty analysis --> there is none!
@@ -691,7 +789,7 @@ else
 end
 
 % Clean variable handles
-tokeep = {'D_U1','PD_U1','D_U2','PD_U2','data','DesignRP','SF','WeightedSampleSize','U1_name','U2_name','EP','Kendall','pvalue'};
+tokeep = {'D_U1','PD_U1','D_U2','PD_U2','data','DesignRP','SF','WeightedSampleSize','U1_name','U2_name','EP','Kendall','pvalue','ReturnPeriod'};
 f=fieldnames(handles);
 toRemove = f(~ismember(f,tokeep));
 handles = rmfield(handles,toRemove);
@@ -729,7 +827,7 @@ Copula_Variables.pvalue = pvalue;
 Copula_Variables.Sn = Sn;
 handles = rmfield(handles,'pvalue');
 % Now save variables
-save MhAST_Results Copula_Variables Design_Variables data EBVP U1 U2 EP EP_emp handles PD_U1 PD_U2 D_U1 D_U2
+save MhAST_Results Copula_Variables Design_Variables data EBVP U1 U2 EP EP_emp handles PD_U1 PD_U2 D_U1 D_U2 lambda_CFG ReturnPeriod
 cd(PWD1)
 
 [~,ID_Sn] = sort(Sn,'ascend'); % ID_Sn(ID_BIC==6) = []; % Remove independence copula
@@ -929,7 +1027,7 @@ cd(PWD1)
 if ispc
     cd([pwd,'\Results\Design\Copula_Based\OR_Scenario'])
 else
-    cd([pwd,'/Results/Design/Copula_Based\OR_Scenario'])
+    cd([pwd,'/Results/Design/Copula_Based/OR_Scenario'])
 end
 try
     eval(['openfig(''Design-Copula-Based-OR-Scenario',num2str(find(ID_CHOSEN==ID_BIC(1))),'.fig'',''new'',''visible'')']);
@@ -999,16 +1097,16 @@ cd(PWD1)
 
 
 % Shut down the parallel cores that were opened up previously
-if v(1) < 9
-    % If matlabpool is open, close it
-    if matlabpool('size') ~= 0
-        matlabpool close
-    end
-else
-    if ~isempty(gcp('nocreate'))
-        delete(gcp('nocreate'))
-    end
-end
+% if v(1) < 9
+%     % If matlabpool is open, close it
+%     if matlabpool('size') ~= 0
+%         matlabpool close
+%     end
+% else
+% %     if ~isempty(gcp('nocreate'))
+% %         delete(gcp('nocreate'))
+% %     end
+% end
 
 end
 
@@ -1622,13 +1720,27 @@ Inch_SS = min( Inch_SS );
 
 %% Plot empirical and copula-based bivariate probability
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'MhAST is ploting copulas',...
-    'if you run t copula, be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'MhAST is ploting copulas',...
+%     'if you run t copula, be patient!',...
+%     '........................................',...
+%     '........................................'});
+% Sample from everywhere in the square
+x = [linspace(1e-5,.95,400) linspace(0.95+1e-5,1-1e-5,500)];
+[xx,yy] = meshgrid(x,x);
+S = [xx(:),yy(:)];
 
+if handles.empiricalcopula
+    disp('calculating the empirical copula!')
+    textHeader = strjoin({'Qmax' 'WLmax'}, ',');
+    fid = fopen('S.csv','w');
+    fprintf(fid,'%s\n',textHeader);
+    dlmwrite('S.csv',S,'-append');
+    fclose(fid);
+    !/usr/local/R-4.2.1/bin/Rscript 'MhAST_empcopula_R.R'
+    emprnd_S = csvread('emprnd_S.csv',1,0);    
+end
 
 for ik = 1:length(ID_CHOSEN)
     % Define the figure size
@@ -1638,20 +1750,21 @@ for ik = 1:length(ID_CHOSEN)
     % First plot the results of
     ax1 = axes('units','normalized'); axpos1 = [0.45 0.45 0.45 0.45]; set(ax1,'position',axpos1);
     box on; % axis square
-    
-    % Sample from everywhere in the square
-    x = [linspace(1e-5,.95,400) linspace(0.95+1e-5,1-1e-5,500)];
-    [xx,yy] = meshgrid(x,x);
-    S = [xx(:),yy(:)];
-    
+        
     try
         % Find probability of samples
         [~,~,P] = Copula_Families_CDF(S,EBVP,Family{ID_CHOSEN(ik)},PAR(ID_CHOSEN(ik),~isnan(PAR(ID_CHOSEN(ik),:))),1);
-        
         % Plot fitted copula contours
         Prob_Plot1(S,P,0,Family,ID_CHOSEN,ik,handles,PAR)
+        
+        if handles.empiricalcopula
+%           %plot empirical copula: Mohammad
+            Prob_Plot1_emp(S,emprnd_S,handles) 
+        end
+
         % Plot probability points
         plot(handles.data(:,1),handles.data(:,2),'b.','markersize',15)
+
     catch
         % Do nothing!
     end
@@ -1809,6 +1922,56 @@ box on; %axis square
 axis([min(handles.data(:,1)) 1*max(handles.data(:,1)) min(handles.data(:,2)) 1*max(handles.data(:,2))])
 end
 
+function Prob_Plot1_emp(EP,EBVP,handles)
+hold on;
+% Sort data based on joint probability
+[P_Sort, ID_Pr] = sort(EBVP);
+% Associated uniform marginal probabilities
+U1  = EP(ID_Pr, 1);
+U2  = EP(ID_Pr, 2);
+
+% Probability contours and their acceptable lower and upper bounds
+P = 0.1:0.1:0.9;
+
+P_LB = P - 0.01*ones(1,9); P_UB = P + 0.01*ones(1,9);
+% P_LB = P - 0.0005*ones(1,9); P_UB = P + 0.0005*ones(1,9);
+
+
+% Define size of text
+SIZE = 14;
+
+% Loop through probability contours
+for j = 1:9
+    % Find indices associated with each probability contour
+    ID_Contour = find( P_Sort(:) >= P_LB(j) & P_Sort(:) <= P_UB(j) );
+    
+    % Sort first uniform marginal
+    [UU, ID_U] = sort( U1(ID_Contour) );
+    % Associated second uniform marginal
+    VV = U2(ID_Contour);
+    VVV = VV(ID_U);
+    
+    % Compute inverse of cdf for each varaible
+    IUU = icdf( handles.PD_U1{handles.counter_D_U1}, UU );
+    IVVV = icdf( handles.PD_U2{handles.counter_D_U2}, VVV );
+    
+    % Trick: remove infinity if there is any
+    IDNAN = find( isinf(IUU) | isinf(IVVV) | isnan(IUU) | isnan(IVVV) );
+    IUU(IDNAN) = []; IVVV(IDNAN) = [];
+    
+    x = movmean(IUU,1000);
+    y = movmean(IVVV,1000);
+    plot(x,y,'--k','linew',0.5);
+ end
+box on; %axis square
+axis([min(handles.data(:,1)) 1*max(handles.data(:,1)) min(handles.data(:,2)) 1*max(handles.data(:,2))])
+end
+
+
+
+
+
+
 function MhAST_Survival_Plot(EP,EBVP,PAR,ID_CHOSEN,Family,handles)
 PWD1 = pwd;
 % Get size of screen in inches
@@ -1822,12 +1985,12 @@ Inch_SS = min( Inch_SS );
 
 %% Plot empirical and copula-based bivariate probability
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'MvCAT is ploting copulas',...
-    'if you run t copula, be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'MvCAT is ploting copulas',...
+%     'if you run t copula, be patient!',...
+%     '........................................',...
+%     '........................................'});
 
 
 for ik = 1:length(ID_CHOSEN)
@@ -2031,12 +2194,12 @@ Inch_SS = min( Inch_SS );
 
 %% Plot empirical and copula-based bivariate probability
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'MhAST is ploting copulas',...
-    'if you run t copula, be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'MhAST is ploting copulas',...
+%     'if you run t copula, be patient!',...
+%     '........................................',...
+%     '........................................'});
 
 
 for ik = 1:length(ID_CHOSEN)
@@ -2811,7 +2974,7 @@ for ij = 1:NP
 end
 end
 
-function [DesignValue, DataReturnPeriod] = MhAST_ReturnPeriod(EBVP,PAR,ID_CHOSEN,Family,Kc,Pc,handles)
+function [DesignValue, DataReturnPeriod,ReturnPeriod] = MhAST_ReturnPeriod(EBVP,PAR,ID_CHOSEN,Family,Kc,Pc,handles)
 PWD1 = pwd;
 % Get size of screen in inches
 %Sets the units of your root object (screen) to inches
@@ -2838,12 +3001,12 @@ DataReturnPeriod.U2 = nan(length(handles.data(:,1)),1);
 
 %% Plot
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'MhAST is ploting copulas',...
-    'if you run t copula, be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'MhAST is ploting copulas',...
+%     'if you run t copula, be patient!',...
+%     '........................................',...
+%     '........................................'});
 
 mu = 1/handles.SF;
 
@@ -2870,7 +3033,7 @@ for ik = 1:length(ID_CHOSEN)
         RP = mu ./ (1 - P);
         
         % Plot fitted copula contours
-        DesignValue.Copula_based_OR(ID_CHOSEN(ik),:) = Prob_Plot3(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,'Copula_OR');
+        [DesignValue.Copula_based_OR(ID_CHOSEN(ik),:),ReturnPeriod.OR{1,ID_CHOSEN(ik)}] = Prob_Plot3(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,'Copula_OR');
         % Plot data points
         plot(handles.data(:,1),handles.data(:,2),'b.','markersize',15)
         grid on
@@ -2974,9 +3137,26 @@ for ik = 1:length(ID_CHOSEN)
         
         % Calculate return period
         RP = mu ./ P_AND;
+
+%         if handles.empiricalcopula
+%             disp('calculating the empirical copula!')
+%             textHeader = strjoin({'Qmax' 'WLmax'}, ',');
+%             fid = fopen('S.csv','w');
+%             fprintf(fid,'%s\n',textHeader);            
+%             dlmwrite('S.csv',S,'-append');
+%             fclose(fid);
+%             Rpath = '/usr/local/R-4.2.1/bin/';
+%             Rscript = 'Mhast_empcopula_R.R';
+%             commandline=['"' Rpath 'R.exe" CMD BATCH "' Rscript  '"'];
+%             system(commandline);
+% %             !Rscript Mhast_empcopula_R.r
+%             emprnd_S = csvread('emprnd_S.csv',1,0);
+%             P_AND_emp = 1 - EP1 - EP2 + emprnd_S;
+%             RP_emp = mu ./ P_AND_emp;
+%         end
         
         % Plot fitted copula contours
-        DesignValue.Copula_based_AND(ID_CHOSEN(ik),:) = Prob_Plot3(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,'Copula_AND');
+        [DesignValue.Copula_based_AND(ID_CHOSEN(ik),:),ReturnPeriod.AND{1,ID_CHOSEN(ik)}] = Prob_Plot3(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,'Copula_AND');
         % Plot data points
         plot(handles.data(:,1),handles.data(:,2),'b.','markersize',15)
         grid on
@@ -3271,7 +3451,7 @@ end
 
 % Plot joint probability contours; this is written based on observed data
 % and their probabilities, but fitted copulas can readily be replaced
-function DesignValue = Prob_Plot3(EP,EBVP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,basis)
+function [DesignValue,RP] = Prob_Plot3(EP,EBVP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,basis)
 hold on;
 % Sort data based on joint probability
 [P_Sort, ID_Pr] = sort(EBVP);
@@ -3286,6 +3466,10 @@ P_LB = P - 0.005*P; P_UB = P + 0.005*P;
 % Define size of text
 SIZE = 12;
 
+
+% ReturnPeriod.MaxDens = nan(1,2);
+% ReturnPeriod.WeightedSample = nan(handles.WeightedSampleSize,2);
+    
 % Loop through probability contours
 for j = 1:6
     % Find indices associated with each probability contour
@@ -3336,9 +3520,7 @@ for j = 1:6
                 text(X_Axis(1),1.05*Y_Axis(2),'Kendall-based RP curves','fontname','times','fontweight','bold','fontsize',SIZE+4);
             end
         end
-        
-        
-        
+
         % Design value
         IUU_design(1,j) = nan;
         IVVV_design(1,j) = nan;
@@ -3384,6 +3566,11 @@ for j = 1:6
         IVVV_design(1,j) = IVVV(id_design);
     end
     
+    RP(j).Dens= Dens;
+    RP(j).MaxDens= [IUU_design(1,j),IVVV_design(1,j)];
+    RP(j).WeightedSample = [ IUU IVVV ];
+    
+    
 end
 box on; %axis square
 axis([X_Axis Y_Axis])
@@ -3409,12 +3596,12 @@ Y_Axis = [min(handles.data(:,2)) 1.3*max(handles.data(:,2))];
 
 %% Plot empirical and copula-based bivariate probability
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'MhAST is ploting copulas',...
-    'if you run t copula, be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'MhAST is ploting copulas',...
+%     'if you run t copula, be patient!',...
+%     '........................................',...
+%     '........................................'});
 
 % Sampling frequency
 mu = 1/handles.SF;
@@ -3423,8 +3610,12 @@ mu = 1/handles.SF;
 for iii = 1:25
     DesignValue.Copula_based_OR(iii,1).MaxDens = nan(1,2);
     DesignValue.Copula_based_OR(iii,1).WeightedSample = nan(1,2);
+    DesignValue.Copula_based_OR(iii,1).Dens = nan(1,1);
+    
     DesignValue.Copula_based_AND(iii,1).MaxDens = nan(1,2);
     DesignValue.Copula_based_AND(iii,1).WeightedSample = nan(1,2);
+    DesignValue.Copula_based_AND(iii,1).Dens = nan(1,1);
+      
     DesignValue.Copula_based_OR(iii,1).U1_based = nan(1,2);
     DesignValue.Copula_based_OR(iii,1).U2_based = nan(1,2);
     DesignValue.Copula_based_AND(iii,1).U1_based = nan(1,2);
@@ -3432,10 +3623,23 @@ for iii = 1:25
     
     DesignValue.Kendall_based(iii,1).MaxDens = nan(1,2);
     DesignValue.Kendall_based(iii,1).WeightedSample = nan(1,2);
+    DesignValue.Kendall_based(iii,1).Dens = nan(1,1);
     DesignValue.Kendall_based(iii,1).U1_based = nan(1,2);
     DesignValue.Kendall_based(iii,1).U2_based = nan(1,2);
+    
+    DesignValue.Copula_based_IND(iii,1).MaxDens = nan(1,2);
+    DesignValue.Copula_based_IND(iii,1).WeightedSample = nan(1,2);
+    DesignValue.Copula_based_IND(iii,1).Dens = nan(1,1);
+    DesignValue.Copula_based_IND(iii,1).U1_based = nan(1,2);
+    DesignValue.Copula_based_IND(iii,1).U2_based = nan(1,2);
+    
 end
 clear iii
+DesignValue.DesignRP_ind = nan(25,1);
+%for comparison of return period in historic and future horizons
+ReturnPeriod.AND{1,25} = nan;
+ReturnPeriod.OR{1,25} = nan;
+
 
 for ik = 1:length(ID_CHOSEN)
     
@@ -3541,6 +3745,7 @@ for ik = 1:length(ID_CHOSEN)
         DesignValue.Copula_based_OR(ID_CHOSEN(ik),1).WeightedSample = nan(1,2);
         DesignValue.Copula_based_OR(ID_CHOSEN(ik),1).U1_based = nan(1,2);
         DesignValue.Copula_based_OR(ID_CHOSEN(ik),1).U2_based = nan(1,2);
+        DesignValue.Copula_based_OR(ID_CHOSEN(ik),1).U2_based = nan(1,1);
     end
     
     set(gca,'fontsize',14)
@@ -3620,7 +3825,7 @@ for ik = 1:length(ID_CHOSEN)
     RP_U2 = ix( ID_RP_U2 ); % Univariate design vaue for U1
     Plot_Position_U2 = [0.35-0.25*log(handles.DesignRP)/log(200) 0.45+0.45*((RP_U2 - Y_Axis(1))/diff(Y_Axis))];
     %%
-    
+
     % First plot the results of
     ax1 = axes('units','normalized'); axpos1 = [0.45 0.45 0.45 0.45]; set(ax1,'position',axpos1);
     box on; % axis square
@@ -3638,7 +3843,10 @@ for ik = 1:length(ID_CHOSEN)
         RP = mu ./ P;
         
         % Plot fitted copula contours
-        [Plot_Position_U21, Plot_Position_U12, Plot_Position_M, DesignValue.Copula_based_AND(ID_CHOSEN(ik),1)] = Prob_Plot4(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,RP_U1,RP_U2,'Copula','AND');
+%         if strcmp(Family(ID_CHOSEN(ik)),'Independence')
+%         else
+            [Plot_Position_U21, Plot_Position_U12, Plot_Position_M, DesignValue.Copula_based_AND(ID_CHOSEN(ik),1)] = Prob_Plot4(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,RP_U1,RP_U2,'Copula','AND');
+%         end
         
         hold on
         
@@ -3657,7 +3865,7 @@ for ik = 1:length(ID_CHOSEN)
         RP_V2 = RP_x( ID_V2 ); % Univariate Return period in river flow domain
         
         
-        [~,~,P_ind] = Copula_Families_CDF(S,EBVP,Family{ID_CHOSEN(6)},PAR(ID_CHOSEN(6),~isnan(PAR(ID_CHOSEN(6),:))),1);
+        [~,~,P_ind] = Copula_Families_CDF(S,EBVP,Family{(6)},PAR((6),~isnan(PAR((6),:))),1);
         EP1_ind = cdf(handles.PD_U1{handles.counter_D_U1},icdf( handles.PD_U1{handles.counter_D_U1}, S(:,1)));
         EP2_ind = cdf(handles.PD_U2{handles.counter_D_U2},icdf( handles.PD_U2{handles.counter_D_U2}, S(:,2)));
         
@@ -3666,11 +3874,14 @@ for ik = 1:length(ID_CHOSEN)
         
         handles2 = handles;
         handles2.DesignRP = RP_V1 * RP_V2;
-        DesignValue.DesignRP_ind(ik,1) = round(RP_V2 * RP_V2);
+        DesignValue.DesignRP_ind(ID_CHOSEN(ik),1) = round(RP_V2 * RP_V2);
         
-        [Plot_Position_U21, Plot_Position_U12, Plot_Position_M, DesignValue.Copula_based_AND(ID_CHOSEN(6),1)] = Prob_Plot4(S,RP_ind,Family,6,1,handles2,PAR,X_Axis,Y_Axis,RP_U1,RP_U2,'Copula','AND');
+%         if strcmp(Family(ID_CHOSEN(ik)),'Independence')
+%         else
         
-        [Plot_Position_U21, Plot_Position_U12, Plot_Position_M, DesignValue.Copula_based_AND(ID_CHOSEN(ik),1)] = Prob_Plot4(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,RP_U1,RP_U2,'Copula','AND');
+            [Plot_Position_U21, Plot_Position_U12, Plot_Position_M, DesignValue.Copula_based_IND(ID_CHOSEN(ik),1)] = Prob_Plot4(S,RP_ind,Family,6,1,handles2,PAR,X_Axis,Y_Axis,RP_U1,RP_U2,'Copula','AND');
+%         end
+%         [Plot_Position_U21, Plot_Position_U12, Plot_Position_M, DesignValue.Copula_based_AND(ID_CHOSEN(ik),1)] = Prob_Plot4(S,RP,Family,ID_CHOSEN,ik,handles,PAR,X_Axis,Y_Axis,RP_U1,RP_U2,'Copula','AND');
         
         
         % Plot data points
@@ -3964,7 +4175,9 @@ else % if analytical density does exist, color code probability isoline with den
     Plot_Position_M = 0.45+0.45*[(IUU(id_design)-X_Axis(1))/diff(X_Axis) (IVVV(id_design)-Y_Axis(1))/diff(Y_Axis)];
     % Design value weighted random samples from Dens
     id_design2 = randsample( 1:length(Dens), handles.WeightedSampleSize, 'true', Dens/sum(Dens) );
-    DesignValue.WeightedSample = [ IUU(id_design2) IVVV(id_design2) ];
+%     id_design2 = randsample( 1:length(Dens), length(Dens), 'true', Dens/sum(Dens) );
+    DesignValue.WeightedSample = [ IUU IVVV ];
+    DesignValue.Dens = col;
     
     % Plot design value
     hold on;
@@ -3990,12 +4203,12 @@ end
 
 function [DesignValue] = MhAST_Design_Unc(EBVP,TPAR,ID_CHOSEN,Family,Kc,Pc,handles)
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'Uncertainty analysis is underway',...
-    'be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'Uncertainty analysis is underway',...
+%     'be patient!',...
+%     '........................................',...
+%     '........................................'});
 
 
 % Set axis limits for U1 and U2
@@ -4141,12 +4354,12 @@ Y_Axis = [min(handles.data(:,2)) 1.3*max(handles.data(:,2))];
 
 %% Plot empirical and copula-based bivariate probability
 
-hh = msgbox({'........................................',...
-    '........................................',...
-    'MhAST is ploting copulas',...
-    'if you run t copula, be patient!',...
-    '........................................',...
-    '........................................'});
+% hh = msgbox({'........................................',...
+%     '........................................',...
+%     'MhAST is ploting copulas',...
+%     'if you run t copula, be patient!',...
+%     '........................................',...
+%     '........................................'});
 
 
 for ik = 1:length(ID_CHOSEN)
@@ -4252,7 +4465,7 @@ end
 
 function [pvalue, Sn, Sn_Star, SSS] = p_value(EBVP,Copula_Variables,Copula_Name,handles)
 % Source: 
-% 1. Genest, C., Rémillard, B., & Beaudoin, D. (2009). Goodness-of-fit tests for copulas: A review and a power study. Insurance: Mathematics and economics, 44(2), 199-213.
+% 1. Genest, C., Rï¿½millard, B., & Beaudoin, D. (2009). Goodness-of-fit tests for copulas: A review and a power study. Insurance: Mathematics and economics, 44(2), 199-213.
 % 2. Rapp, A. (2017). Goodness-of-Fit Testing for Copula-Based Models with Application in Atmospheric Science.
 % 3. Kojadinovic, I., & Yan, J. (2010). Modeling multivariate distributions with continuous margins using the copula R package. Journal of Statistical Software, 34(9), 1-20.
 % 4. Berg, D. (2009). Copula goodness-of-fit testing: an overview and power comparison. The European Journal of Finance, 15(7-8), 675-701.

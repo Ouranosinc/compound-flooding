@@ -31,6 +31,7 @@ ax.add_feature(cfeat.OCEAN, color = 'gainsboro')
 # ax.add_feature(cfeat.RIVERS)
 # ax.add_feature(cfeat.LAKES)
 ax.add_feature(cfeat.COASTLINE, alpha=0.5)
+# ax.add_feature(cfeat.BORDERS,linestyle =':')
 
 
 # extent for LOT2
@@ -45,16 +46,13 @@ ax.yaxis.set_visible(False)
 
 
 # add scatterplot onto the map
-# cmap = matplotlib.cm.seismic
-cmap = colors.ListedColormap(['midnightblue', 'mediumblue','blue','slateblue','lightsteelblue','white','white','tomato','red','darkred'])
-
-bounds = np.array([-0.3,-0.25,-0.2, -0.15,-0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2])
-
+cmap = matplotlib.cm.seismic
+bounds = np.array([-0.3,-0.25,-0.2, -0.15,-0.1, 0, 0.05, 0.1, 0.15, 0.2])
 norm = colors.BoundaryNorm(boundaries=bounds,ncolors=cmap.N)
 
 h=plt.scatter(data['Longitude'], data['Latitude'],
             c=data['tau_QcondWL'], 
-            cmap=cmap, 
+            cmap=plt.get_cmap("seismic"), 
             transform=ccrs.PlateCarree(),
             norm = norm)
 
@@ -62,9 +60,10 @@ h=plt.scatter(data['Longitude'], data['Latitude'],
 divider = make_axes_locatable(ax)
 ax_cb = divider.new_horizontal(size="3%", pad=0.03, axes_class=plt.Axes)
 fig.add_axes(ax_cb)
-cbars = plt.colorbar(h, cax=ax_cb, ticks=[-0.3,-0.25,-0.2, -0.15,-0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2])
+cbars = plt.colorbar(h, cax=ax_cb)
 
 cbars.set_label(r'$\tau$', fontsize=14)
+#cbars.set_label(r'$\tau$', fontsize=14)
 plt.clim(-0.30,0.2);
 
 ax.set_ylabel("Latitude", fontsize=14)
@@ -87,7 +86,7 @@ gl.right_labels = False
 
 
 
-plt.savefig('tau_QcondWL_R2_v2.png',bbox_inches='tight')
+plt.savefig('tau_QcondWL_R2.png',bbox_inches='tight')
 
 
 # %% plot p-values

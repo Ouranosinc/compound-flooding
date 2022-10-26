@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Aug 26 14:44:07 2022
+
+@author: mohammad
+"""
+
+import netCDF4 as nc
+import numpy as np
+
+
+f ='/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/tide_surge_daily_max.nc'
+# print(f.variables.keys()) # get all variable names
+
+twl = nc.Dataset(f,mode = 'r')
+
+x = twl.variables['station_x_coordinate']
+y = twl.variables['station_y_coordinate']
+time = twl.variables['time']
+crs = twl.variables['crs']
+station  = twl.variables['station_name']
+print(station.dimensions)
+
+
+data = twl.variables['tide_surge'][:,:]
+
+
