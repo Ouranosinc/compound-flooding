@@ -7,7 +7,6 @@ from datetime import timedelta
 import os
 # %% Inputs:
 
-
 # 1. Name of the river outlet for which we want to create the joint datasets.
 # 2. Path to the daily flow data (excel file) provided by DEH and 
 # 3. Path to the hourly water level data (MPO simulations)
@@ -21,13 +20,14 @@ name = 'Richelieu'
 serie = 'WLcondQ'
 pth_riverflow_data = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/Extraction_Qjourn_Ouranos.xlsx' # This is daily data
 pth_water_level_data = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/wl_data.csv' # This is hourly data
-pth_output = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/'+name+ '/'+serie + '.csv') # This is daily data
+pth_output = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/'+name) # This is daily data
 # %% The main function
 
 def CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,serie):
     # check to see if the directory for output exist, otherwise it creates
-    if not pth_output:
-        os.makedirs(name)
+    isexist = os.path.exists(pth_output)
+    if not isexist:
+        os.makedirs(pth_output)
         print('a new directory with the name of river outlet is created!')
         
     data_Q = pd.read_excel(pth_riverflow_data, index_col = None)
@@ -125,7 +125,7 @@ def CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,s
         
         
         # Write results to a csv file
-        df_WLcondQ.to_csv(pth_output,mode='w',index=False)
+        df_WLcondQ.to_csv(os.path.join(pth_output,'WLcondQ.csv'),mode='w',index=False)
         
         tau, p_value_K = stats.kendalltau(df_WLcondQ['Qmax'], df_WLcondQ['Wlmax'],nan_policy='omit')
         rho, p_value_Sp = stats.spearmanr(df_WLcondQ['Qmax'], df_WLcondQ['Wlmax'],nan_policy='omit')
@@ -167,11 +167,11 @@ def CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,s
         
         # Write results to a .csv file
         df_QcondWL = df_QcondWL.dropna()
-        df_QcondWL.to_csv(pth_output,mode='w',index=False)
+        df_QcondWL.to_csv(os.path.join(pth_output,'QcondWL.csv'),mode='w',index=False)
         
         # calculating correlation    
         
-        tau, p_value_MK = stats.kendalltau(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_policy='omit')
+        tau, p_value_K = stats.kendalltau(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_policy='omit')
         rho, p_value_Sp = stats.spearmanr(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_policy='omit')
         print('QcondWL joint dataset dependence significance:')
         print('Kendalls tau = ', tau, 'P-value', p_value_K )
