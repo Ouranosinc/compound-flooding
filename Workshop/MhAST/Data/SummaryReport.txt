@@ -1,0 +1,11 @@
+================================================================================ 
+MARGINAL DISTRIBUTIONS 
+================================================================================ 
+Evaluate dependence between the two input variables 
+
+      Correlation type        Correlation Coefficient              p value             Significant at 5%?
+          Kendall rank                         0.1713               0.0714                             No 
+ Spearman's rank-order                         0.2470               0.0748                             No 
+Pearson product-moment                         0.2894               0.0356                            Yes 
+                                                                       
+
