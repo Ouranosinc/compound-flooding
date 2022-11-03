@@ -437,12 +437,12 @@ aa = 0;
 
 for i=1:n
     
-     num = sqrt(log10(1./U1(i,1))*log10(1./U2(i,1)));
-     denom = log10(1/(max(U1(i,1),U2(i,1)).^2));
-     ll = log10(num./denom);
+     num = sqrt(log10(1/EP1_emp(i,1))*log10(1/EP2_emp(i,1)));
+     denom = log10(1/(max(EP1_emp(i,1),EP2_emp(i,1))^2));
+     ll = log10(num/denom);
      aa = aa +ll;    
 end
-lambda_CFG = 2-2*exp((1./n) * aa);
+lambda_CFG = 2-2*exp((1/n) * aa);
 
 cd ..
 
@@ -613,6 +613,8 @@ for jj = 1:length(ID_CHOSEN)
         
         % Calculate Nash Sutcliff Efficiency (NSE)
         NSE(j,1) = 1 - sum( RES'*RES )/sum( (EBVP - mean(EBVP)).^2 );
+        
+        Rhat = nan;
         continue
     end
     
@@ -741,10 +743,12 @@ if strcmp(Optimization,'MCMC')
         DesignValue_UncMaxDens.Kendall_based(:)={nan(1,2)};
     end
     % Plot weighted random samples on the uncertainty isoline and uncertainty max densities
-    MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_OR,DesignValue_UncMaxDens.Copula_based_OR,ID_CHOSEN,Family,handles,'Copula_OR')
-    MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_AND,DesignValue_UncMaxDens.Copula_based_AND,ID_CHOSEN,Family,handles,'Copula_AND')
-    if handles.Kendall == 1
-        MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Kendall_based,DesignValue_UncMaxDens.Kendall_based,ID_CHOSEN,Family,handles,'Kendall')
+    if handles.DesignUnc == 1
+        MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_OR,DesignValue_UncMaxDens.Copula_based_OR,ID_CHOSEN,Family,handles,'Copula_OR')
+        MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_AND,DesignValue_UncMaxDens.Copula_based_AND,ID_CHOSEN,Family,handles,'Copula_AND')
+        if handles.Kendall == 1
+            MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Kendall_based,DesignValue_UncMaxDens.Kendall_based,ID_CHOSEN,Family,handles,'Kendall')
+        end
     end
     
 else
@@ -773,10 +777,12 @@ else
     DesignValue_UncMaxDens.Kendall_based(:)={nan(1,2)};
     % Plot weighted random samples on the uncertainty isoline and uncertainty max densities
     % MhAST_Scatter_Plot_Design(DesignValue_MaxDens,DesignValue_UncMaxDens,ID_CHOSEN,Family,handles)
-    MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_OR,DesignValue_UncMaxDens.Copula_based_OR,ID_CHOSEN,Family,handles,'Copula_OR')
-    MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_AND,DesignValue_UncMaxDens.Copula_based_AND,ID_CHOSEN,Family,handles,'Copula_AND')
-    if handles.Kendall == 1
-        MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Kendall_based,DesignValue_UncMaxDens.Kendall_based,ID_CHOSEN,Family,handles,'Kendall')
+    if handles.DesignUnc == 1
+        MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_OR,DesignValue_UncMaxDens.Copula_based_OR,ID_CHOSEN,Family,handles,'Copula_OR')
+        MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Copula_based_AND,DesignValue_UncMaxDens.Copula_based_AND,ID_CHOSEN,Family,handles,'Copula_AND')
+        if handles.Kendall == 1
+            MhAST_Scatter_Plot_Design(DesignValue_MaxDens.Kendall_based,DesignValue_UncMaxDens.Kendall_based,ID_CHOSEN,Family,handles,'Kendall')
+        end
     end
     
 end
@@ -4376,24 +4382,36 @@ for ik = 1:length(ID_CHOSEN)
     box on; % axis square
     try
         plot(DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,1),DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,2),'r.','markersize',17); hold on;
-        set(gca,'fontsize',17, 'ytick',1:5)
+        set(gca,'fontsize',17)
+        grid on;
     catch
     end
     plot(DesignValue_MaxDens(ID_CHOSEN(ik)).WeightedSample(:,1),DesignValue_MaxDens(ID_CHOSEN(ik)).WeightedSample(:,2),'k.','markersize',17)
     legend({'Uncertainty of max density','Weighted samples on RP level'},'Location','northwest','fontname','times','fontweight','bold','fontsize',10)
-    axis([X_Axis Y_Axis])
+    hold on
+    insetaxes2 = axes ('Parent',h,'Position',[0.4  0.5 0.25 0.25]);
+    plot(DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,1),DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,2),'r.','markersize',17); 
+    set(gca,'Xlim',[min(DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,1)) max(DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,1))])
+    set(gca,'Ylim',[min(DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,2)) max(DesignValue_UncMaxDens{ID_CHOSEN(ik),1}(:,2))])
+    set(gca,'fontsize',17)
+    grid minor;
     
-    xlabel(handles.U1_name,'fontname','times','fontweight','bold','fontsize',12)
-    ylabel(handles.U2_name,'fontname','times','fontweight','bold','fontsize',12)
+%     axis([X_Axis Y_Axis])
+    hold (insetaxes2, 'off')
+    
+    xlabel(ax1,handles.U1_name,'fontname','times','fontweight','bold','fontsize',12)
+    ylabel(ax1,handles.U2_name,'fontname','times','fontweight','bold','fontsize',12)
     
     % Write the title
-    t = title(strcat('\color{red}',upper(Family{ID_CHOSEN(ik)})),'rotation',0);
+    t = title(ax1,strcat('\color{red}',upper(Family{ID_CHOSEN(ik)})),'rotation',0);
     set(t, 'units', 'normalized', 'horizontalAlignment', 'right','fontname','times','fontweight','bold','fontsize',12);
     h1 = get(t, 'position');
     set(t, 'position', [1 h1(2) h1(3)])
     
-    if strcmp(basis, 'Copula')
-        text(X_Axis(1),1.05*Y_Axis(2),'Copula-based RP','fontname','times','fontweight','bold','fontsize',16);
+    if strcmp(basis,'Copula_OR')
+        text(X_Axis(1),1.05*Y_Axis(2),'Copula-based OR scenario','fontname','times','fontweight','bold','fontsize',16);
+    elseif strcmp(basis,'Copula_AND')
+        text(X_Axis(1),1.05*Y_Axis(2),'Copula-based AND scenario','fontname','times','fontweight','bold','fontsize',16);
     else
         text(X_Axis(1),1.05*Y_Axis(2),'Kendall-based RP','fontname','times','fontweight','bold','fontsize',16);
     end

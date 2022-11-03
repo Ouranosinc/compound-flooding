@@ -52,7 +52,7 @@ handles.Optimization = 'MCMC'; % Local: local optimization; MCMC: both local & g
 % 9: Farlie-Gumbel-Morgenstern (FGM), 10: Gumbel-Barnet, 11: Plackett, 12: Cuadras-Auge, 13: Raftery
 % 14: Shih-Louis, 15: Linear-Spearman, 16: Cubic, 17: Burr, 18: Nelson, 19: Galambos, 20: Marshal-Olkin
 % 21: Fischer-Hinzmann, 22: Roch-Alegre, 23: Fischer-Kock, 24: BB1, 25: BB5, 26: Tawn
-handles.ID_CHOSEN = [1,3,4,5,6,8,18];
+handles.ID_CHOSEN = [6];
 % handles.ID_CHOSEN = [1:25];
 
 % Calculate pvalues or not? 0: no pvalue; 1: pvalue for the best copula
