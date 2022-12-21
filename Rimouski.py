@@ -107,19 +107,22 @@ THarmonics['Date'] = pd.to_datetime(THarmonics["Date"])
 df= pd.merge(data, THarmonics, on='Date', how='inner')
 
 
-plt.subplots(1, 1, sharex=True, figsize=(8, 8), dpi=300)
-sns.set(style='ticks', font_scale=1.2)
-g = sns.regplot(data=df, x="Tide_Harmonics", y="z(m)", scatter_kws={'color':'red','edgecolor':'white'},line_kws = {'color':'blue'})
-h = sns.lineplot(data=df, x="Tide_Harmonics", y = "Tide_Harmonics",color='black', ci=None, linestyle='--', linewidth = 3)
-plt.xlabel('T_TH(m)')
-plt.ylabel('T_TPXO(m)')
+fig,ax = plt.subplots(1,1, sharex = False, figsize = (8,5), dpi = 300)
+# sns.set(style='ticks', font_scale=1.2)
+h = sns.lineplot(data=df, x="Tide_Harmonics", y = "Tide_Harmonics",color='blue', ci=None, linestyle='-', linewidth = 2)
+g = sns.regplot(data=df, x="Tide_Harmonics", y="z(m)", scatter_kws={'color':'white','edgecolor':'black'},line_kws = {'color':'red'})
+
+ax.set_ylabel('$Tide_{TPXO9}\ (m)$')
+ax.set_xlabel('$Tide_{TideHarmonics}\ (m)$' )
+ax.set_title('$(a)$')
+ax.legend(['perfect-fit','data','least-square fit'])
 #sns.despine()
 plt.grid('on')
 # plt.xlim([-1.3,1.5])
 # plt.ylim([-1.3,1.5])
 
 
-plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Rimouski/comparison_Tide_Rimouski.png', dpi=300)
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/comparison_Tide_Rimouski.png', dpi=300)
 
 
 
@@ -133,12 +136,14 @@ df2 = df.sort_values(by='month',ascending=True)
 
 
 # plot time series
-fig, ax = plt.subplots(1, 1, sharex=True, figsize=(8, 4), dpi=300)
+fig, ax = plt.subplots(1, 1, sharex=True, figsize=(8, 5), dpi=300)
 sns.boxplot(x = 'month', y = 'diff', data = df2, ax = ax)
 # sns.despine()
-plt.ylabel('TPXO-TideHarmonics')
+plt.ylabel('$Tide_{TPXO}-Tide_{TideHarmonics}\ (m)$')
 plt.grid('on')
-plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Rimouski/monthly_delta_tide.png', dpi=300)
+ax.set_title('$(b)$')
+
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/monthly_delta_tide.png', dpi=300)
 
 # %% calculating the storm surge time series
 
@@ -155,104 +160,6 @@ df['surge(m)'] = df['surge(m)'] + df['MSL']
 
 pth2 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/'+name+'/Surge_UTC.csv')
 df.to_csv(pth2, mode='w', index=False)
-
-# # %% intersecting the two datasewts TPXO and observed water levels
-# #data = data.drop_duplicates(subset=['Date'])
-
-# # here id is common column
-# df_Renard= pd.merge(data, wl, on='Date', how='inner')
-
-# df_Renard = df_Renard.drop(['Depth(m)'], axis=1)
-
-# df_Renard = df_Renard.rename(columns={'z(m)': 'TD(m)'})
-
-
-# wl_mean_annual = df_Renard.groupby(df_Renard.Date.dt.year)[
-#     'wl(m)'].transform('mean')
-
-# wl_mean_annual.name = 'MSL'
-
-# wl_mean_annual = wl_mean_annual.to_frame()
-# wl_mean_annual['Date'] = df_Renard['Date']
-
-# df_Renard.reset_index(drop=True)
-# wl_mean_annual.reset_index(drop=True)
-
-# df_Renardd = wl_mean_annual.join(
-#     df_Renard, rsuffix='_r')  # here id is common column
-
-
-# df_Renardd = df_Renardd.drop(['Date_r'], axis=1)
-
-# MSL = df_Renard['wl(m)'].mean()
-
-# #df_Rimouski['TD(m)'] = df_Rimouski['TD(m)'] +MSL
-
-# #df_Rimouski['Residual'] = df_Rimouski['wl'] - df_Rimouski['TD(m)']
-
-# df_Renardd['TD_obs'] = df_Renardd['TD(m)'] + df_Renardd['MSL']
-
-
-# df_Renardd['Residual'] = df_Renardd['wl(m)'] - df_Renardd['TD_obs']
-
-
-# pth3 = '/mnt/705300_rehaussement_marin/3- Data/LOT2/Au_Renard/totalwl_and_tide.csv'
-# df_Renardd.to_csv(pth3, mode='w', index=False)
-
-# # %%
-# #y = df_Rimouski['Residual'].to_numpy()
-# # plot power spectrum to identify the
-
-
-# n = 292831  # number of points
-# Lx = 1  # time step = 1 hr
-# y = df_Rimouski['Residual'].to_numpy()
-# # Return the Discrete Fourier Transform sample frequencies.
-# W = fftfreq(292831, 1)
-# f_signal = fft(y)
-
-# fig, ax = plt.subplots(1, 1, sharex=True, figsize=(8, 4), dpi=300)
-# ax.plot(abs(W), abs(f_signal))
-# plt.xlabel('Frequency (1/day)')
-
-
-# lowcut = (1/(11*2))
-# highcut = (1/(14*2))
-# fs = 1  # sampling frequency in Hz = 1 value every 1 hr
-# order = 3
-
-
-# nyq = 0.5 * fs
-# low = lowcut / nyq
-# high = highcut / nyq
-# b, a = signal.butter(order, [low, high], btype='bandstop')
-
-# yf = signal.filtfilt(b, a, y)
-
-# yfdf = pd.DataFrame({'yf': yf})
-
-# df_inner = df_inner.drop(['yf'], axis=1)
-
-# df_inner = df_inner.join(yfdf)
-# df_inner['yf'] = df_inner['yf'].fillna(0)
-
-
-# # %%
-
-# fig, ax = plt.subplots(1, 1, sharex=True, figsize=(8, 4), dpi=300)
-# #ax.plot(df_inner['Date'], df_inner['TD(m)'],label='TD')
-# #ax.plot(df_Rimouski['Date'], df_Rimouski['MSL'],label='Mean_annual_water level')
-# ax.plot(df_Rimouski['Date'][-1000:],
-#         df_Rimouski['Residual'][-1000:], label='Residual')
-# # ax.plot(df_Rimouski['Date'][-5000:], df_Rimouski['TD_obs'][-5000:],label='TD')
-# # ax.plot(df_Rimouski['Date'][-5000:], df_Rimouski['wl'][-5000:], label='WL')
-# ax.set_ylabel('Water Level (m)')
-# ax.set_xlabel('Date')
-# ax.legend()
-# plt.grid('on')
-# ax.spines['top'].set_visible(False)
-# ax.spines['right'].set_visible(False)
-# plt.savefig(r'C:\Users\mohbiz1\Desktop\Dossier_travail\705300_rehaussement_marin\3- Data\LOT2\Rimouski\Residual2.png')
 
 
 # %% constructing total water level at Petit Cascapedia and Ristigouche using strom surge extracted from Belledune station (Tide = TPXO)

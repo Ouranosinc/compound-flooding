@@ -16,6 +16,7 @@ from scipy import stats
 import plotly.express as px
 import plotly.io as pio
 import os
+import seaborn as sns
 pio.renderers.default='browser'
 
 
@@ -83,4 +84,239 @@ Matane.to_csv(pth3,mode='w',index=True)
 
 pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Mitis_surge_Muise.csv')
 Mitis.to_csv(pth3,mode='w',index=True)
+
+
+
+# %% comparison of the Muise daily storm surge and surge extracted from storm surge
+
+# Read Mitis
+pth = ('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Mitis_surge_Muise.csv')
+Mitis_Muise_Surge = pd.read_csv(pth,encoding="ISO-8859-1", skiprows=0, index_col=False)
+Mitis_Muise_Surge['time'] = pd.to_datetime(Mitis_Muise_Surge["time"])
+Mitis_Muise_Surge = Mitis_Muise_Surge.set_index('time')
+Mitis_Muise_Surge.index.names = ['Date']
+
+#Read Matane
+pth = ('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Matane_surge_Muise.csv')
+Matane_Muise_Surge = pd.read_csv(pth,encoding="ISO-8859-1", skiprows=0, index_col=False)
+Matane_Muise_Surge['time'] = pd.to_datetime(Matane_Muise_Surge["time"])
+Matane_Muise_Surge = Matane_Muise_Surge.set_index('time')
+Matane_Muise_Surge.index.names = ['Date']
+
+#Read aux Outardes
+pth = ('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Outardes_surge_Muise.csv')
+Outardes_Muise_Surge = pd.read_csv(pth,encoding="ISO-8859-1", skiprows=0, index_col=False)
+Outardes_Muise_Surge['time'] = pd.to_datetime(Outardes_Muise_Surge["time"])
+Outardes_Muise_Surge = Outardes_Muise_Surge.set_index('time')
+Outardes_Muise_Surge.index.names = ['Date']
+
+
+#Read aux Outardes
+pth = ('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/Ristigouche_surge_Muise.csv')
+Ristigouche_Muise_Surge = pd.read_csv(pth,encoding="ISO-8859-1", skiprows=0, index_col=False)
+Ristigouche_Muise_Surge['time'] = pd.to_datetime(Ristigouche_Muise_Surge["time"])
+Ristigouche_Muise_Surge = Ristigouche_Muise_Surge.set_index('time')
+Ristigouche_Muise_Surge.index.names = ['Date']
+
+
+
+
+
+pth = ('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Rimouski/Surge_UTC.csv')
+Surge_Rimouski= pd.read_csv(pth,encoding="ISO-8859-1", skiprows=0, index_col=False)
+Surge_Rimouski['Date'] = pd.to_datetime(Surge_Rimouski["Date"])
+
+Surge_Rimouski['Date_EST'] = Surge_Rimouski['Date'].dt.tz_localize('UTC').dt.tz_convert('EST')
+Surge_Rimouski = Surge_Rimouski.drop(['Date'], axis=1)
+Surge_Rimouski = Surge_Rimouski.rename(columns={'Date_EST': 'Date'})
+
+Surge_Rimouski = Surge_Rimouski.set_index('Date')
+
+Surge_Rimouski_day =Surge_Rimouski.resample('D')['surge(m)'].agg(['max'])
+
+Surge_Rimouski_day.reset_index(inplace=True)
+Surge_Rimouski_day['Date_New'] = Surge_Rimouski_day['Date'].dt.date
+Surge_Rimouski_day = Surge_Rimouski_day.drop(['Date'], axis=1)
+Surge_Rimouski_day = Surge_Rimouski_day.rename(columns={'Date_New': 'Date'})
+Surge_Rimouski_day['Date'] = pd.to_datetime(Surge_Rimouski_day["Date"])
+Surge_Rimouski_day = Surge_Rimouski_day.set_index('Date')
+Surge_Rimouski_day = Surge_Rimouski_day.rename(columns={'max': 'surge_station_data'})
+
+
+# for Ristigouche
+pth = ('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Belledune/Surge_UTC.csv')
+Surge_Belledune= pd.read_csv(pth,encoding="ISO-8859-1", skiprows=0, index_col=False)
+Surge_Belledune['Date'] = pd.to_datetime(Surge_Belledune["Date"])
+
+Surge_Belledune['Date_EST'] = Surge_Belledune['Date'].dt.tz_localize('UTC').dt.tz_convert('EST')
+Surge_Belledune = Surge_Belledune.drop(['Date'], axis=1)
+Surge_Belledune = Surge_Belledune.rename(columns={'Date_EST': 'Date'})
+
+Surge_Belledune = Surge_Belledune.set_index('Date')
+
+Surge_Belledune_day =Surge_Belledune.resample('D')['surge(m)'].agg(['max'])
+
+Surge_Belledune_day.reset_index(inplace=True)
+Surge_Belledune_day['Date_New'] = Surge_Belledune_day['Date'].dt.date
+Surge_Belledune_day = Surge_Belledune_day.drop(['Date'], axis=1)
+Surge_Belledune_day = Surge_Belledune_day.rename(columns={'Date_New': 'Date'})
+Surge_Belledune_day['Date'] = pd.to_datetime(Surge_Belledune_day["Date"])
+
+Surge_Belledune_day = Surge_Belledune_day.set_index('Date')
+
+Surge_Belledune_day = Surge_Belledune_day.rename(columns={'max': 'surge_station_data'})
+
+
+
+
+
+
+
+Mitis=pd.merge(Surge_Rimouski_day,Mitis_Muise_Surge, how='inner', left_index=True, right_index=True)
+Mitis = Mitis.dropna()
+
+
+Matane=pd.merge(Surge_Rimouski_day,Matane_Muise_Surge, how='inner', left_index=True, right_index=True)
+Matane = Matane.dropna()
+
+
+Outardes=pd.merge(Surge_Rimouski_day,Outardes_Muise_Surge, how='inner', left_index=True, right_index=True)
+Outardes = Outardes.dropna()
+
+
+Ristigouche=pd.merge(Surge_Belledune_day,Ristigouche_Muise_Surge, how='inner', left_index=True, right_index=True)
+Ristigouche = Ristigouche.dropna()
+
+
+
+
+plt.subplots(1, 1, sharex=True, figsize=(8, 8), dpi=300)
+sns.set(style='ticks', font_scale=1.2)
+# g = sns.regplot(data=df, x="Tide_Harmonics", y="z(m)", scatter_kws={'color':'red','edgecolor':'white'},line_kws = {'color':'blue'})
+h = sns.lineplot(data=Ristigouche, x="surge_station_data", y = "max_surge",color='black', ci=None, linestyle='--', linewidth = 3)
+plt.xlabel('Surge_station(m)')
+plt.ylabel('Surge_Muise(m)')
+#sns.despine()
+plt.grid('on', which='minor')
+plt.xlim([-1.3,1.5])
+plt.ylim([-1.3,1.5])
+
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT2/Rimouski/comparison_Tide_Rimouski.png', dpi=300)
+
+
+
+
+# plot the differences in time
+Mitis['diff'] = Mitis['surge_station_data'] - Mitis['max_surge']
+Mitis.reset_index(inplace=True)
+
+Mitis['month'] = Mitis['Date'].dt.strftime('%b')
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+Mitis['month'] = pd.Categorical(Mitis['month'], categories=months, ordered=True)
+Mitis = Mitis.sort_values(by='month',ascending=True)
+
+
+
+Matane['diff'] = Matane['surge_station_data'] - Matane['max_surge']
+Matane.reset_index(inplace=True)
+
+Matane['month'] = Matane['Date'].dt.strftime('%b')
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+Matane['month'] = pd.Categorical(Matane['month'], categories=months, ordered=True)
+Matane = Matane.sort_values(by='month',ascending=True)
+
+
+
+Outardes['diff'] = Outardes['surge_station_data'] - Outardes['max_surge']
+Outardes.reset_index(inplace=True)
+
+Outardes['month'] = Outardes['Date'].dt.strftime('%b')
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+Outardes['month'] = pd.Categorical(Outardes['month'], categories=months, ordered=True)
+Outardes = Outardes.sort_values(by='month',ascending=True)
+
+
+Ristigouche['diff'] = Ristigouche['surge_station_data'] - Ristigouche['max_surge']
+Ristigouche.reset_index(inplace=True)
+
+Ristigouche['month'] = Ristigouche['Date'].dt.strftime('%b')
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+Ristigouche['month'] = pd.Categorical(Ristigouche['month'], categories=months, ordered=True)
+Ristigouche = Ristigouche.sort_values(by='month',ascending=True)
+
+
+
+
+# storm surges at Mitis, Matane, et aux Outareds
+
+# plot time series
+fig,axes = plt.subplots(2,3,sharex = True, figsize = (20,10), dpi = 300)
+
+sns.boxplot(ax = axes[0,0], x = 'month', y = 'max_surge', data = Mitis)
+# sns.despine()
+axes[0,0].set_ylabel('$Surge_{GTSR}\ (m)$')
+axes[0,0].set_xlabel('$Month$' )
+axes[0,0].grid(visible = True)
+axes[0,0].set_title('$(a)\ Mitis$')
+
+
+sns.boxplot(ax = axes[0,1], x = 'month', y = 'max_surge', data = Matane)
+# sns.despine()
+axes[0,1].set_ylabel('')
+axes[0,1].set_xlabel('$Month$' )
+axes[0,1].grid(visible = True)
+axes[0,1].set_title('$(b)\ Matane$')
+
+sns.boxplot(ax = axes[0,2], x = 'month', y = 'max_surge', data = Outardes)
+# sns.despine()
+axes[0,2].set_ylabel('')
+axes[0,2].set_xlabel('$Month$' )
+axes[0,2].grid(visible = True)
+axes[0,2].set_title('$(c)\ aux\ Outardes$')
+
+
+sns.boxplot(ax = axes[1,0], x = 'month', y = 'diff', data = Mitis)
+# sns.despine()
+axes[1,0].set_ylabel('$Surge_{station}$-$Surge_{GTSR}\ (m)$')
+axes[1,0].set_xlabel('$Month$' )
+axes[1,0].grid(visible = True)
+axes[1,0].set_title('$(d)\ Mitis$')
+
+
+sns.boxplot(ax = axes[1,1], x = 'month', y = 'diff', data = Matane)
+# sns.despine()
+axes[1,1].set_ylabel('')
+axes[1,1].set_xlabel('$Month$' )
+axes[1,1].grid(visible = True)
+axes[1,1].set_title('$(e)\ Matane$')
+
+sns.boxplot(ax = axes[1,2], x = 'month', y = 'diff', data = Outardes)
+# sns.despine()
+axes[1,2].set_ylabel('')
+axes[1,2].set_xlabel('$Month$' )
+axes[1,2].grid(visible = True)
+axes[1,2].set_title('$(f)\ aux\ Outardes$')
+
+
+
+
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/monthly_surge_Rimouski.png', dpi=300)
+
+
+
+# plot Ristigouche
+fig,ax = plt.subplots(1,1,sharex = True, figsize = (10,5), dpi = 300)
+sns.boxplot(ax = ax, x = 'month', y = 'diff', data = Ristigouche)
+ax.set_ylabel('$Surge_{station}$-$Surge_{GTSR}$')
+ax.set_xlabel('$Month$' )
+ax.grid(visible = True)
+ax.set_title('$(f)\ Ristigouche$')
+
+plt.savefig('/home/mohammad/Dossier_travail/705300_rehaussement_marin/paper/monthly_surge_Ristigouche.png', dpi=300)
+
+
 

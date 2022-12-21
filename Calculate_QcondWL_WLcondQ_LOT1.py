@@ -159,25 +159,3 @@ df_QcondWL.to_csv(pth3,mode='w',index=False)
 
 tau, p_value_MK = stats.kendalltau(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_policy='omit')
 rho, p_value_Sp = stats.spearmanr(df_QcondWL['Qmax'], df_QcondWL['Wlmax'],nan_policy='omit')
-
-
-
-
-
-# df_QcondWL_RM = df_QcondWL
-# df_QcondWL_RM['Wlmax'] = df_QcondWL['Wlmax']+0.482
-
-# df_WLcondQ_RM = df_WLcondQ
-# df_WLcondQ_RM['Wlmax'] = df_WLcondQ['Wlmax']+0.482
-
-# pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT1/'+name+'/QcondWL_CGVD28_48_2cm.csv')
-# df_QcondWL_RM.to_csv(pth3,mode='w',index=False)
-
-# pth3 = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/LOT1/'+name+'/WLcondQ_CGVD28_48_2cm.csv')
-# df_WLcondQ_RM.to_csv(pth3,mode='w',index=False)
-
-# tau, p_value_MK = stats.kendalltau(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
-# rho, p_value_Sp = stats.spearmanr(df_WLcondQ_RM['Qmax'], df_WLcondQ_RM['Wlmax'],nan_policy='omit')
-
-# tau, p_value_MK = stats.kendalltau(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')
-# rho, p_value_Sp = stats.spearmanr(df_QcondWL_RM['Qmax'], df_QcondWL_RM['Wlmax'],nan_policy='omit')

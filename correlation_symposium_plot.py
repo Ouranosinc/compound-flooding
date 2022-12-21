@@ -50,15 +50,6 @@ h=plt.scatter(data['Longitude'], data['Latitude'],
             transform=ccrs.PlateCarree(),
             norm = norm,s = 10)
 
-divider = make_axes_locatable(ax)
-ax_cb = divider.new_horizontal(size="3%", pad=0.05, axes_class=plt.Axes)
-fig.add_axes(ax_cb)
-
-cbars = plt.colorbar(h, cax=ax_cb,extend = 'both')
-
-# cbars = plt.colorbar(h, pad = 0.05, orientation="horizontal")
-cbars.set_label(r'$\tau$', fontsize=10)
-
 ax.set_title('$WL_{cond}$Q',fontsize=10)
 
 axins = inset_axes(ax, width="40%", height="40%", loc="lower right", 
@@ -74,7 +65,7 @@ axins.xaxis.set_visible(False)
 axins.yaxis.set_visible(False)
 
 
-cmap = matplotlib.cm.seismic
+
 bounds = np.linspace(-0.5,0.5,11)
 norm = colors.BoundaryNorm(boundaries=bounds,ncolors=256)
 
@@ -85,7 +76,6 @@ h=axins.scatter(data['Longitude'], data['Latitude'],
             norm = norm,s=10)
 
 
-# %% plots
 
 ax = fig.add_subplot(2,2,2,projection = ccrs.PlateCarree())
 
@@ -102,9 +92,8 @@ ax.yaxis.set_visible(False)
 
 
 # add scatterplot onto the map
-cmap = matplotlib.cm.seismic
-bounds = np.array([-0.3,-0.2,-0.1,0.1, 0.2,0.3, 0.4,0.5])
-norm = colors.BoundaryNorm(boundaries=bounds,ncolors = cmap.N)
+bounds = np.linspace(-0.5,0.5,11)
+norm = colors.BoundaryNorm(boundaries=bounds,ncolors = 256)
 
 h = plt.scatter(data['Longitude'], data['Latitude'],
             c=data['tau_QcondWL'], 
@@ -116,14 +105,12 @@ h = plt.scatter(data['Longitude'], data['Latitude'],
 divider = make_axes_locatable(ax)
 ax_cb = divider.new_horizontal(size="3%", pad=0.05, axes_class=plt.Axes)
 fig.add_axes(ax_cb)
-cbars = plt.colorbar(h, cax=ax_cb)
 
+cbars = plt.colorbar(h, cax=ax_cb,extend = 'both')
+
+# cbars = plt.colorbar(h, pad = 0.05, orientation="horizontal")
 cbars.set_label(r'$\tau$', fontsize=10)
 
-plt.clim(-0.30,0.5);
-
-# ax.set_ylabel("Latitude", fontsize=14)
-# ax.set_xlabel("Longitude", fontsize=14)
 ax.set_title('$Q_{cond}$WL',fontsize=10)
 
 axins = inset_axes(ax, width="40%", height="40%", loc="lower right", 
@@ -138,8 +125,8 @@ axins.set_extent([-71.9,-74.2,45.5,46.7])
 axins.xaxis.set_visible(False)
 axins.yaxis.set_visible(False)
 
-cmap = matplotlib.cm.seismic
-bounds = np.array([-0.3,-0.2,-0.1,0,0.1, 0.2,0.3, 0.4,0.5])
+
+bounds = np.linspace(-0.5,0.5,11)
 norm = colors.BoundaryNorm(boundaries=bounds,ncolors=256)
 
 h=axins.scatter(data['Longitude'], data['Latitude'],
@@ -151,10 +138,7 @@ h=axins.scatter(data['Longitude'], data['Latitude'],
 
 
 
-
 ax = fig.add_subplot(2,2,3,projection = ccrs.PlateCarree())
-
-
 
 ax.add_feature(cfeat.LAND,color = 'lightgrey')
 ax.add_feature(cfeat.OCEAN, color = 'white')
@@ -177,7 +161,7 @@ ax.yaxis.set_visible(False)
 
 # add scatterplot onto the map
 cmap = colors.ListedColormap(['red', 'black'])
-bounds=[0,0.1,0.5]
+bounds=[0,0.05,0.5]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
 ax.scatter(data['Longitude'], data['Latitude'],
@@ -214,7 +198,7 @@ axins.xaxis.set_visible(False)
 axins.yaxis.set_visible(False)
 
 cmap = colors.ListedColormap(['red', 'black'])
-bounds=[0,0.1,0.5]
+bounds=[0,0.05,0.5]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
 h=axins.scatter(data['Longitude'], data['Latitude'],
@@ -249,7 +233,7 @@ ax.yaxis.set_visible(False)
 
 # add scatterplot onto the map
 cmap = colors.ListedColormap(['red', 'black'])
-bounds=[0,0.1,0.5]
+bounds=[0,0.05,0.5]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
 ax.scatter(data['Longitude'], data['Latitude'],
@@ -266,7 +250,6 @@ cbars = plt.colorbar(h, cax=ax_cb)
 
 cbars.set_label('p-value', fontsize=10)
 #cbars.set_label(r'$\tau$', fontsize=14)
-plt.clim(0,1);
 
 ax.set_ylabel("Latitude", fontsize=12)
 ax.set_xlabel("Longitude", fontsize=12)
@@ -285,7 +268,7 @@ axins.xaxis.set_visible(False)
 axins.yaxis.set_visible(False)
 
 cmap = colors.ListedColormap(['red', 'black'])
-bounds=[0,0.1,0.5]
+bounds=[0,0.05,0.5]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
 h=axins.scatter(data['Longitude'], data['Latitude'],
@@ -295,16 +278,3 @@ h=axins.scatter(data['Longitude'], data['Latitude'],
             norm = norm,s=10)
 
 plt.savefig('Figure2.png',bbox_inches='tight')
-
-
-
-
-
-
-
-
-
-
-
-
-
