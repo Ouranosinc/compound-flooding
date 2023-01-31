@@ -54,7 +54,7 @@ h=ax.scatter(data['Longitude'], data['Latitude'],
         c=data['WLcondQ'], 
         cmap=cmap, 
         transform=ccrs.PlateCarree(), norm = norm, s= 8)
-ax.set_title('$WL_{cond}$Q')
+# ax.set_title('')
 
 
 cmap = plt.cm.viridis
@@ -92,8 +92,6 @@ cmaplist = [cmap(i) for i in range(cmap.N)]
 
 cmap = mpl.colors.LinearSegmentedColormap.from_list('Custom cmap', cmaplist, cmap.N)
 
-# bounds = np.linspace(1, 50, 50)            
-# norm = mpl.colors.BoundaryNorm(bounds, cmap.N,extend = 'max')
 divider = make_axes_locatable(ax)
 ax_cb = divider.new_horizontal(size="3%", pad=0.05, axes_class=plt.Axes)
 fig.add_axes(ax_cb)
