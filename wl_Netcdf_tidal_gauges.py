@@ -14,12 +14,12 @@ import pandas as pd
 import xarray as xr
 import os
 
-def Create_netcdf_wl(rivers,outfile):
+def Create_netcdf_wl_gauges(rivers,pthbase,outfile):
 
         # conversion for the historic period
         df = pd.DataFrame(columns=['time', 'river_name'])
         for count, r in enumerate(rivers):
-            pth_wl = os.path.join(pthbase + r + '_normal.csv')
+            pth_wl = os.path.join(pthbase + r + '/'+ 'wl_data_CGVD28.csv')
             data = pd.read_csv(pth_wl, index_col=None)
             data = data.rename(columns={'wl(m)': 'wl', 'Date': 'time'})
             data['river_name'] = r
@@ -35,10 +35,9 @@ def Create_netcdf_wl(rivers,outfile):
 
 if __name__ == "__main__":
     # %% Inputs
-    rivers = ['A_Mars', 'au_Renard', 'Becancour', 'Chaudiere', 'du_Loup', 'Etchemin', 'Gouffre', 'Jacques_Cartier',
-              'Maskinonge','Mmorency', 'Nicolet', 'Richelieu', 'Saint_Charles', 'Saint_Francois', 'Saint_Mauricie', 'Sainte_Anne', 'du_Sud']
-    pthbase = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/'
-    outfile = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/wl_historic.nc'
+    rivers = ['A_Mars', 'au_Renard', 'Matane', 'Mitis', 'Outardes', 'Petit_Saguenay', 'Petite_Cascapedia', 'Ristigouche','Saint_Jean']
+    pthbase = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Results/water_level_time_series/'
+    outfile = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/wl_historic_tidal_gauges.nc'
 
-    Create_netcdf_wl(rivers,outfile)
+    Create_netcdf_wl_gauges(rivers,pthbase,outfile)
 

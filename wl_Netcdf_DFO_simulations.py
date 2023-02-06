@@ -1,6 +1,7 @@
 
 """
 This script transforms the water level time series of DFO simulations from multiple csv files to one single Netcdf.
+
 1. rivers: The list of river outlets to be transformed to one single Netcdf file.
 2. Period: historic or future
 3. pthbase: path to the directory of the files
@@ -14,7 +15,7 @@ import pandas as pd
 import xarray as xr
 import os
 
-def Create_netcdf_wl(period,rivers,outfile):
+def Create_netcdf_wl(period,pthbase,rivers,outfile):
     if period == 'historic':
 
         # conversion for the historic period
@@ -34,6 +35,7 @@ def Create_netcdf_wl(period,rivers,outfile):
         ds.to_netcdf(outfile)
     else:
         # conversion for the future period
+        # conversion for the historic period
         df = pd.DataFrame(columns=['time', 'river_name'])
         for count, r in enumerate(rivers):
             pth_wl = os.path.join(pthbase + r + '_50cm.csv')
@@ -58,5 +60,5 @@ if __name__ == "__main__":
     pthbase = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/'
     outfile = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Denis_simulation_results/wl_historic.nc'
 
-    Create_netcdf_wl('historic',rivers,outfile)
+    Create_netcdf_wl('historic',pthbase,rivers,outfile)
 
