@@ -6,6 +6,47 @@
   <component name="ChangeListManager">
     <list default="true" id="ace89b93-8430-43f6-abee-0ac76ea11863" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Bootstrapping.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Calculate return_interval.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EVA_for_LOT1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FFA.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure5_report.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure6_report.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_20_report.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_7_8_report.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_9_report.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HaHa.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kcop_Test.R" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kcop_card_S.R" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Mean_annual_SLR.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Moulin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Moulin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Muise" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rimouski.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Run_MhAST_Script.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SLR_dependent.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SLR_independent.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis_SA_SG.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/autocorrelation_analysis" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/com_K_plot.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/com_chi_plot.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/comparison_two_time_series.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/correlation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/correlation_symposium_plot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cwra_Kendal_plot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mean_annual_SLR" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/muise_analysis" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/paper_figure1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/paper_figure1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plot_SLR_Climatedata.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plot_bivariate.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plot_bivariate_paper.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plots_cartopy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/readObs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/readdata.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/readdata2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/underestimation_factor.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
