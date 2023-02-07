@@ -2,12 +2,16 @@
 """
 This script transforms the water level time series of DFO simulations from multiple csv files to one single Netcdf.
 
+Inputs:
+
 1. rivers: The list of river outlets to be transformed to one single Netcdf file.
 2. Period: historic or future
 3. pthbase: path to the directory of the files
 4. outfile: Path to write the output Netcdf file
 
-Output: Netcdf file containing the water level time series
+Output:
+
+Netcdf file containing the water level time series
 
 """
 

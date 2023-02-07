@@ -1,12 +1,17 @@
 
 """
 This script transforms water level time series of river outlets with nearby tidal gauges (csv files) to one single Netcdf. The name of rivers are given in 'rivers' list.
+
+Inputs:
+
 1. rivers: The list of river outlets to be transformed to one single Netcdf file.
 2. Period: historic or future
 3. pthbase: path to the directory of the files
 4. outfile: Path to write the output Netcdf file
 
-Output: Netcdf file containing the water level time series
+Output:
+
+Netcdf file containing the water level time series
 
 """
 
