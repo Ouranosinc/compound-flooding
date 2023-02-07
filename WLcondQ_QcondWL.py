@@ -16,13 +16,6 @@ import os
 
 # WLcondQ/QcondWL datasets in csv format
 
-name = 'Richelieu'
-serie = 'WLcondQ'
-pth_riverflow_data = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/Extraction_Qjourn_Ouranos.xlsx' # This is daily data
-pth_water_level_data = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/wl_data.csv' # This is hourly data
-pth_output = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/'+name) # This is daily data
-# %% The main function
-
 def CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,serie):
     # check to see if the directory for output exist, otherwise it creates
     isexist = os.path.exists(pth_output)
@@ -177,8 +170,14 @@ def CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,s
         print('Kendalls tau = ', tau, 'P-value', p_value_K )
         print('Spearman rho = ', rho, 'P-value', p_value_Sp )
 
-# %% Call this function now
-CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,serie)
+if __name__ == "__main__":
+    # %% Inputs
+    name = 'Richelieu'
+    serie = 'WLcondQ'
+    pth_riverflow_data = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/Extraction_Qjourn_Ouranos.xlsx'  # This is daily data
+    pth_water_level_data = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/wl_data.csv'  # This is hourly data
+    pth_output = os.path.join('/home/mohammad/Dossier_travail/705300_rehaussement_marin/Workshop/MhAST_inputs/' + name)  # This is daily data
+    CreateJointDataset(name,pth_riverflow_data,pth_water_level_data,pth_output,serie)
 
 
 
