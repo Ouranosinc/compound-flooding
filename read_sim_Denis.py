@@ -88,8 +88,6 @@ def read_wl(pthbase,outlet,outfile,start,end):
     df.to_csv(outfile,mode='w',columns=["Date","wl(m)"],index=False)
 
 
-
-
 if __name__ == "__main__":
     # %% Inputs
     pthbase = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/DFO-MPO/plus50cm/'

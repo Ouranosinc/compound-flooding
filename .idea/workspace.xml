@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ace89b93-8430-43f6-abee-0ac76ea11863" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MhAST_main.m" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/WLcondQ_QcondWL.py" beforeDir="false" afterPath="$PROJECT_DIR$/WLcondQ_QcondWL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post-processing_MhAST.m" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/post_processing_MhAST.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/read_sim_Denis.py" beforeDir="false" afterPath="$PROJECT_DIR$/read_sim_Denis.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,12 +31,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "last_opened_file_path": "/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/codes/read_sim_Denis.py",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;last_opened_file_path&quot;: &quot;/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/codes/read_sim_Denis.py&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Compound_flooding" type="PythonConfigurationType" factoryName="Python">
       <module name="codes" />
