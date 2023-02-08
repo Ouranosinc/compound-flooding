@@ -28,13 +28,13 @@ def read_water_levels (path,station_id,start,end,outfile):
     wl = wl.set_index('Date')
     wl = wl.drop(["Obs_date", 'SLEV(metres)'], axis=1)
     wl = wl.loc[start:end]
-    wl.to_csv(outfile, mode='w', index=False)
+    wl.to_csv(outfile, mode='w', index=True)
 
 if __name__ == "__main__":
     # %% Inputs
     path = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Saint_Joseph_de_la_rive/'
     station_id = '3057'
     start = '1968-01-01'
-    end = '2022-12-31'
+    end = '2021-12-31'
     outfile = '/home/mohammad/Dossier_travail/705300_rehaussement_marin/3- Data/Saint_Joseph_de_la_rive/Saint_Joseph_de_la_rive.csv'
     read_water_levels(path,station_id,start,end,outfile)
